@@ -1222,7 +1222,10 @@
 #           identical(mean(Demonstration_SGP@Data$SGP_STANDARD_ERROR, na.rm=TRUE) |> round(3), 15.515)  #  8.509
 #           identical(digest(Demonstration_SGP@Data$SGP_STANDARD_ERROR), "cb81264f5933f0e4e22d515b5437f97f")
 #           pre- parallel refactor key: ba125c9bb4a62a0e76bcbac55fca913b
-			if (identical(digest(Demonstration_SGP@Data$SGP_STANDARD_ERROR), "49c99d958745f7f5382ee8e7a2289560")) {
+            if (identical(
+                digest(Demonstration_SGP@Data$SGP_STANDARD_ERROR),
+                ifelse(.Platform$OS.type == "unix", "49c99d958745f7f5382ee8e7a2289560", "4db943ed3216372d4c54823134c4279d"))
+            ) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_STANDARD_ERROR (Omitting ALGEBRA_II): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_STANDARD_ERROR (Omitting ALGEBRA_II): FAIL\n")

@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: Student Growth Percentiles & Percentile Growth Trajectories
-Version: 2.3-1.10
-Date: 2026-8-24
+Version: 2.3-1.11
+Date: 2026-8-27
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre"), comment=c(ORCID = "0000-0003-0476-5599")),
 		person(given=c("Adam", "R."), family="Van Iwaarden", email="avaniwaarden@nciea.org", role="aut"),
 		person(given="Ben", family="Domingue", email="ben.domingue@gmail.com", role="aut"),
@@ -76,7 +76,7 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 4.2.0)
 Suggests: SGPdata (>= 28.0-0), knitr, rmarkdown
-Imports: Cairo, carrier, collapse, colorspace, crayon, curl, datasets, data.table (>= 1.14.0), digest, equate (>= 2.0-5), graphics, grid, grDevices, gridBase, gtools, jsonlite, matrixStats, methods, mirai, parallel, pkgsearch, quantreg, randomNames (>= 0.0-5), Rfast, rlang, sn (>= 1.0-0), splines, stats, svglite, toOrdinal, utils
+Imports: Cairo, carrier, collapse, colorspace, crayon, curl, datasets, data.table (>= 1.14.0), digest, equate (>= 2.0-5), graphics, grid, grDevices, gridBase, jsonlite, methods, mirai, parallel, pkgsearch, quantreg, randomNames (>= 0.0-5), Rfast, rlang, sn (>= 1.0-0), splines, stats, svglite, toOrdinal, utils
 Description: An analytic framework for the calculation of norm- and criterion-referenced academic growth estimates using large scale, longitudinal education assessment data as developed in Betebenner (2009) <doi:10.1111/j.1745-3992.2009.00161.x>.
 SystemRequirements: (PDF)LaTeX (https://www.latex-project.org/) with 'pdfpages' package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs
 URL: https://sgp.io, https://github.com/CenterForAssessment/SGP, https://CRAN.R-project.org/package=SGP
@@ -84,5 +84,5 @@ BugReports: https://github.com/CenterForAssessment/SGP/issues
 VignetteBuilder: knitr
 LazyData: Yes
 LazyDataCompression: xz
-License: GPL-3 
+License: GPL-3
 ByteCompile: TRUE
