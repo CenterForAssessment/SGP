@@ -54,6 +54,10 @@ function(
 		}
 	}
 
+	if (!is.null(state)) {
+		set_sgp_parallel_state_data(state)
+		on.exit(set_sgp_parallel_state_data(NULL), add = TRUE)
+	}
 
 	### SGP_Configuration arguments
 

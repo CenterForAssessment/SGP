@@ -64,6 +64,8 @@ function(sgp_object,
 
     SGPstateData <- list(SGP::SGPstateData[[state]]) ### Needed due to possible assignment of values to SGPstateData
     names(SGPstateData) <- state
+    set_sgp_parallel_state_data(state)
+    on.exit(set_sgp_parallel_state_data(NULL), add = TRUE)
 
 	###############################################################
 	### Tests associated with supplied arguments
@@ -987,7 +989,7 @@ function(sgp_object,
                     return.panel.data = FALSE,
                     parallel.config = lower.level.parallel.config,
                     calculate.simex = get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex.baseline"]], sgp.iter),
-                    SGPt = getSGPtNames(sgp.iter, SGPt, "sgp.calculate.simex.baseline"),
+                    SGPt = getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
                     SGPt.max.time = SGPt.max.time,
                     verbose.output = verbose.output,
                     ## Add in previously unspecified defaults too:

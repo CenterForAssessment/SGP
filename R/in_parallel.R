@@ -19,6 +19,39 @@ sync_compute <- function(arg_list, FUN) {
         lapply(arg_list, \(arg_set) {  do.call(FUN, arg_set)  })
 }
 
+##  Register in-memory SGPstateData[[state]] for mirai workers. studentGrowthProjections
+##  and related functions read cutscores and configuration from SGP::SGPstateData; mirai
+##  daemons start fresh and only see packaged data unless this snapshot is pushed.
+set_sgp_parallel_state_data <- function(state = NULL) {
+    if (is.null(state)) {
+        options(sgp.parallel.state = NULL, sgp.parallel.state.data = NULL)
+    } else {
+        options(
+            sgp.parallel.state = state,
+            sgp.parallel.state.data = SGP::SGPstateData[[state]]
+        )
+    }
+    invisible(NULL)
+}
+
+sync_sgp_state_data_mirai <- function() {
+    sgp_state <- getOption("sgp.parallel.state")
+    sgp_state_data <- getOption("sgp.parallel.state.data")
+    if (is.null(sgp_state) || is.null(sgp_state_data)) return(invisible(NULL))
+
+    mirai::everywhere(
+        {
+            suppressPackageStartupMessages(require(SGP))
+            sd <- SGP::SGPstateData
+            sd[[sgp_state]] <- sgp_state_data
+            assignInNamespace("SGPstateData", sd, ns = "SGP")
+        },
+        sgp_state = sgp_state,
+        sgp_state_data = sgp_state_data
+    )
+    invisible(NULL)
+}
+
 mirai_compute <- function(arg_list, FUN) {
         mirai::daemons(
             n = getOption("sgp.workers", 2L), dispatch = FALSE, output = TRUE
@@ -26,6 +59,7 @@ mirai_compute <- function(arg_list, FUN) {
         mirai::everywhere({
             data.table::setDTthreads(threads = 1)
         })
+        sync_sgp_state_data_mirai()
         on.exit(mirai::daemons(0))
 
         mirai::mirai_map(
