@@ -32,7 +32,7 @@ function(libname, pkgname) {
         installed.version <- utils::packageDescription("SGP")[["Version"]]
         cran.version <- tryCatch({
             # Add timeout to CRAN check
-            curl::curl_fetch_memory("https://cran.r-project.org/web/packages/SGP/index.html", 
+            curl::curl_fetch_memory("https://cran.r-project.org/web/packages/SGP/index.html",
                                   handle = curl::new_handle(timeout = 2))
             green("v", pkgsearch::cran_package("SGP")[["Version"]], sep="")
         }, error = function(e) red("Not Available"),
