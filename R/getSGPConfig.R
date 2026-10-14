@@ -324,6 +324,20 @@ function(sgp_object,
                         for (k in ord.iter) {
                             qrmats.k <- paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep = "_")
                             if (is.null(tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]][[qrmats.k]])) next
+                            tmp.simex.orders <- getsplineMatrices(
+                                my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]][[qrmats.k]][[
+                                    paste0("lambda_", par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['lambda']][-1][1])]],
+                                my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
+                                my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
+                                my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
+                                my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+                                my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
+                                what.to.return="ORDERS")
+                            if (!k %in% tmp.simex.orders) {
+                                messageSGP(paste0("\tNOTE: SIMEX Coefficient matrices of order ", k, " are not available for ",
+                                    paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), "."))
+                                next
+                            }
                             for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['lambda']][-1]) {
                             par.sgp.config[[b.iter[b]]][['sgp.matrices']][[tmp.matrix.label]][[qrmats.k]][[paste0("lambda_", L)]] <-
                             getsplineMatrices(
