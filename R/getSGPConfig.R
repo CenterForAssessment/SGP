@@ -321,6 +321,7 @@ function(sgp_object,
                         if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) {
                             ord.iter <- tmp.max.order
                         } else ord.iter <- seq_along(tmp.orders)
+                        ord.iter <- ord.iter[ord.iter <= length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']]) - 1L]
                         for (k in ord.iter) {
                             qrmats.k <- paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep = "_")
                             if (is.null(tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]][[qrmats.k]])) next
