@@ -2,7 +2,7 @@ SGP
 ===
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6471237.svg)](https://doi.org/10.5281/zenodo.6471237)
-[![R-CMD-check](https://github.com/CenterForAssessment/SGP/workflows/R-CMD-check/badge.svg)](https://github.com/CenterForAssessment/SGP/actions)
+[![R-CMD-check](https://github.com/CenterForAssessment/SGP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CenterForAssessment/SGP/actions/workflows/R-CMD-check.yaml)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
 [![Development Version](https://img.shields.io/badge/devel-2.3--2.1-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)

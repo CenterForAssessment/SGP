@@ -1,7 +1,6 @@
 ^docs$
 ^README\.md$
 ^LICENSE.md
-^\.appveyor\.yml$
 ^vignettes/releases$
 ^\.github$
 ^CITATION\.cff$
