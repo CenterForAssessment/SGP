@@ -245,6 +245,8 @@ function(panel.data,         ## REQUIRED
 
         subx.list <- vector(mode = "list", length = n.orders)
         suby.list <- vector(mode = "list", length = n.orders)
+        rl <- rep(TRUE, nrow(cohort_data))
+        if (n.time.terms) rl <- !is.na(cohort_data[["TIME"]]) & !is.na(cohort_data[["TIME_LAG"]])
 
         for (ord in seq(n.orders)) {
             cols.to.get <-
@@ -253,11 +255,9 @@ function(panel.data,         ## REQUIRED
             if (length(t.names <- grep("TIME", colnames(X), value = TRUE))) {
                 cols.to.get <- c(cols.to.get, t.names)
             }
-            subx <- collapse::na_omit(X, cols = cols.to.get, na.attr = TRUE)
-            if (return.y & !is.null(attributes(subx)$na.action)) {
-                suby.list[[ord]] <- Y[-(attributes(subx)$na.action)]
-            } else  suby.list[[ord]] <- Y
-            subx.list[[ord]] <- subx[, c("Intercept", cols.to.get)]
+            rl <- rl & !is.na(cohort_data[[paste0("prior_", ord)]])
+            suby.list[[ord]] <- if (return.y) Y[rl] else Y
+            subx.list[[ord]] <- X[rl, c("Intercept", cols.to.get), drop = FALSE]
         }
         return(list(
             X = subx.list,
@@ -434,13 +434,10 @@ function(panel.data,         ## REQUIRED
         if (ranked.simex) {
           for (p in seq.int(3)) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
             pred_midpoint <- collapse::setop(
-                pred[,(seq.int(ncol(pred))-1L)], "+",
+                pred[, (seq.int(ncol(pred))-1L), drop = FALSE], "+",
                 (Rfast::coldiffs(pred) |> collapse::setop("/", 2))
             )
-            pred <- cbind(pred, pred_midpoint)[, order(c(seq.int(ncol(pred)), seq.int(ncol(pred)-1)))]
-            if (!is.matrix(pred) & is.vector(pred)) {  #  Account for edge cases where a single student is fed in (e.g., baseline)
-              pred <- matrix(pred, nrow = 1, byrow = TRUE)
-            }
+            pred <- cbind(pred, pred_midpoint)[, order(c(seq.int(ncol(pred)), seq.int(ncol(pred)-1))), drop = FALSE]
           }
           tmp.zero <- 794L
         } else tmp.zero <- 101L
