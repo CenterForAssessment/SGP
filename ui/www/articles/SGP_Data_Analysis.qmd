@@ -1,0 +1,107 @@
+---
+title: "SGP Data Analysis"
+author: "Damian W Betebenner & Adam R Van Iwaarden"
+date: "2019-02-20"
+toc: true
+---
+
+
+```{r include = FALSE}
+    library(SGP)
+    library(SGPdata)
+
+    is_html_output = function() {
+        knitr::opts_knit$get("rmarkdown.pandoc.to")=="html"
+    }
+
+    knitr::opts_chunk$set(
+        collapse=TRUE,
+        comment="",
+        prompt=TRUE,
+        fig.dpi=96)
+
+    if (is_html_output()) {
+        options(width=1000)
+    }
+```
+
+# Introduction
+
+SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the *lower level functions*
+[```studentGrowthPercentiles```](https://sgp.io/reference/studentGrowthPercentiles.html) and [```studentGrowthProjections```](https://sgp.io/reference/studentGrowthProjections.html).
+However, it is often easier to use *higher level functions* (wrapper functions) for the lower level functions, particularly for operational analyses.
+Both approaches to running SGP analyses are discussed below.
+
+
+# SGP analysis using lower level functions
+
+
+
+
+# SGP analysis using higher level functions
+
+## SGP Analysis in 6 Steps
+
+1. [```prepareSGP```](https://sgp.io/reference/prepareSGP.html)
+2. [```analyzeSGP```](https://sgp.io/reference/analyzeSGP.html)
+3. [```combineSGP```](https://sgp.io/reference/combineSGP.html)
+4. [```summarizeSGP```](https://sgp.io/reference/summarizeSGP.html)
+5. [```visualizeSGP```](https://sgp.io/reference/visualizeSGP.html)
+6. [```outputSGP```](https://sgp.io/reference/outputSGP.html)
+
+
+## SGP Analysis in 1 Step
+
+Because these steps are almost always conducted simultaneously in operational SGP analyses, the SGP Package has wrapper functions
+[```abcSGP```](https://sgp.io/reference/abcSGP.html) and [```updateSGP```](https://sgp.io/reference/updateSGP.html)
+that "wrap" the above 6 steps into a single function call, simplifying the source code associated with the analysis.
+
+
+```{r eval=FALSE, prompt=FALSE}
+#####################################################################################
+###
+### R Script for Demonstration SGP analyses
+###
+#####################################################################################
+
+### Load SGP & SGPdata packages
+
+require(SGP)
+require(SGPdata)
+
+
+### abcSGP
+
+Demonstration_SGP <- abcSGP(
+	sgp_object=sgpData_LONG,
+	data_supplementary=list(INSTRUCTOR_NUMBER=sgpData_INSTRUCTOR_NUMBER),
+	parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4, SUMMARY=4, GA_PLOTS=4, SG_PLOTS=1)))
+
+
+### Save results
+
+save(Demonstration_SGP, file="Data/Demonstration_SGP.Rdata")
+```
+
+Running this script will run the six steps mentioned earlier by performing the following:
+
+1. [```prepareSGP```](https://sgp.io/reference/prepareSGP.html) Take exemplar LONG data, *sgpData_LONG*, and INSTRUCTOR-STUDENT lookup files, *sgpData_INSTRUCTOR_NUMBER* and create the SGP object *Demonstration_SGP* that includes them.
+2. [```analyzeSGP```](https://sgp.io/reference/analyzeSGP.html) Performs SGP analyses for all years and content areas including: student growth percentiles, baseline student growth percentiles, student growth projections, baseline student growth projections, lagged student growth projections, lagged baseline student growth projections.
+3. [```combineSGP```](https://sgp.io/reference/combineSGP.html) Merges results derived from *analyzeSGP* back into the master longitudinal record, *Demonstration_SGP@Data*, and calculates/creates scale scores associated with SGP targets.
+4. [```summarizeSGP```](https://sgp.io/reference/summarizeSGP.html) Calculates summary tables and puts them results into the *Demonstration_SGP@Summary* slot.
+5. [```visualizeSGP```](https://sgp.io/reference/visualizeSGP.html) Creates state level summary bubble plots, growth achievement plots (wave charts), and demonstration student growth plots.
+6. [```outputSGP```](https://sgp.io/reference/outputSGP.html) Exports data in multiple formats:
+  * *Demonstration_SGP_Data_LONG.txt.zip* a pipe delimited copy of *Demonstration_SGP@Data*, the complete master longitudinal record.
+  * *Demonstration_SGP_Data_LONG_2020.txt.zip* a pipe delimited copy of the 2020 longitudinal record subset of *Demonstration_SGP@Data*.
+  * *Demonstration_SGPData_WIDE.txt.zip* a pipe delimited WIDE version of the master longitudinal record, *Demonstration_SGP@Data*.
+  * *Demonstration_SGP_INSTRUCTOR_Data.txt.zip* a pipe delimited LONG version of the INSTRUCTOR_NUMBER file merged with the master longitudinal data record.
+
+The *parallel.config* argument is used to take advantage of computing resources with multiple processors/cores. In general, parallel computation works better on
+Linux/OSX than on Windows, though the package is tested on all three operating systems. Removing the *parallel.config* argument will result in the analyses being run
+sequentially --- same results, just takes longer.
+
+
+# Contributions & Requests
+
+If you have a contribution or topic request for this vignette, don't hesitate to write or set up
+an [issue on GitHub](https://github.com/CenterForAssessment/SGP/issues).

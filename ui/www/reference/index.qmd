@@ -1,0 +1,133 @@
+---
+title: "Reference"
+toc: false
+---
+
+## Low level SGP functions
+
+These functions are responsible for all student growth percentile and student growth projection calculation.
+
+::: {.reference-index}
+
+[`studentGrowthPercentiles()`](studentGrowthPercentiles.html)
+:   Student Growth Percentiles
+
+[`studentGrowthProjections()`](studentGrowthProjections.html)
+:   Student Growth Projections
+
+:::
+
+## High level SGP functions
+
+These functions simplify operational SGP calculations as wrappers for low level functions.
+
+::: {.reference-index}
+
+[`abcSGP()`](abcSGP.html)
+:   Perform 6 step sequence: prepareSGP, analyzeSGP, combineSGP, summarizeSGP, visualizeSGP, and outputSGP
+
+[`analyzeSGP()`](analyzeSGP.html)
+:   Analyze student data to produce student growth percentiles and student growth projections
+
+[`baselineSGP()`](baselineSGP.html)
+:   Analyze student data to produce student growth percentiles and coefficient matrices from a baseline (i.e. multiple cohort) norm group
+
+[`combineSGP()`](combineSGP.html)
+:   Combine student data and SGP results
+
+[`outputSGP()`](outputSGP.html)
+:   Output student data and SGP results for a variety of purposes
+
+[`prepareSGP()`](prepareSGP.html)
+:   Prepare data for SGP analyses
+
+[`rliSGP()`](rliSGP.html)
+:   Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments.
+
+[`summarizeSGP()`](summarizeSGP.html)
+:   Summarize student scale scores, proficiency levels and student growth percentiles according to user specified summary group variables
+
+[`testSGP()`](testSGP.html)
+:   Test SGP Package functions
+
+[`updateSGP()`](updateSGP.html)
+:   Function to update SGP object with additional year's analyses
+
+[`visualizeSGP()`](visualizeSGP.html)
+:   Visualize data from SGP analyses
+
+:::
+
+## SGP utility functions
+
+These functions are used in various ways as part of SGP analyses.
+
+::: {.reference-index}
+
+[`bubblePlot()`](bubblePlot.html)
+:   Core bubblePlot function for SGP
+
+[`bubblePlot_Styles()`](bubblePlot_Styles.html)
+:   bubblePlot_Styles providing various uses of the core bubblePlot function
+
+[`courseProgressionSGP()`](courseProgressionSGP.html)
+:   Identify potential course progressions for SGP analyses
+
+[`createKnotsBoundaries()`](createKnotsBoundaries.html)
+:   Function to create Knots and Boundaries from supplied data in LONG format.
+
+[`capwords()`](capwords.html)
+:   Function for converting all caps to mixed case. Useful in data cleaning.
+
+[`getStateAbbreviation()`](getStateAbbreviation.html)
+:   Function for converting state/organization abbreviations to long form and back.
+
+[`gofSGP()`](gofSGP.html)
+:   Function for producing goodness of fit plots using existing SGP object
+
+[`growthAchievementPlot()`](growthAchievementPlot.html)
+:   growthAchievementPlot for SGP
+
+[`splineMatrix-class`](splineMatrix-class.html)
+:   Class "splineMatrix"
+
+[`SGP-class`](SGP-class.html)
+:   Class "SGP"
+
+[`studentGrowthPlot()`](studentGrowthPlot.html)
+:   Create a student growth and achievement chart
+
+[`studentGrowthPlot_Styles()`](studentGrowthPlot_Styles.html)
+:   studentGrowthPlot_Styles providing base templates for the core studentGrowthPlot function
+
+:::
+
+## SGP meta-data for state/organization level analyses
+
+This internal data set contains meta-data and configurations used as part of state/organization level analyses.
+
+::: {.reference-index}
+
+[`SGPstateData`](SGPstateData.html)
+:   State assessment program data from large scale state assessments for use with SGP package
+
+:::
+
+## Other
+
+::: {.reference-index}
+
+[`createSuperCohortData()`](createSuperCohortData.html)
+:   Function to create longitudinal data set merging together individual years into a super-cohort of data.
+
+[`gofPrint()`](gofPrint.html)
+:   Function to produce Goodness of Fit plots from a SGP object.
+
+[`setNamesSGP()`](setNamesSGP.html)
+:   Function for renaming data (typically from outputSGP) from a state/organization naming conventions to those used in the SGP package
+
+[`SGP-package`](SGP-package.html)
+:   SGP: Student Growth Percentiles & Percentile Growth Trajectories
+
+:::
+

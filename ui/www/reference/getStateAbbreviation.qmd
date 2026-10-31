@@ -1,0 +1,48 @@
+---
+title: "getStateAbbreviation()"
+subtitle: "Function for converting state/organization abbreviations to long form and back."
+toc: true
+---
+
+## Description
+
+The function getStateAbbreviation converts state/organization abbreviations to their long form and back. For example ID gets converted to Idaho.
+
+## Usage
+
+``` R
+getStateAbbreviation(
+                    supplied.name,
+                    SGPfunction=NULL,
+                    type="ABBREVIATION")
+```
+
+## Arguments
+
+`supplied.name`{#supplied.name}
+
+:   A character string state/organization abbreviation or long form name.
+
+`SGPfunction`{#SGPfunction}
+
+:   SGP package function from which `getStateAbbreviation` is being called. Defaults to NULL.
+
+`type`{#type}
+
+:   Either `Abbreviation` or `Long` indicating whether the desired output is an Abbreviation (long form name is supplied) or the long form name (abbreviation is supplied). The default is `Abbreviation`.
+
+## Value
+
+Returns a character string.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>
+
+## Examples
+
+``` R
+getStateAbbreviation("IDAHO") ## ID
+getStateAbbreviation("ID", type="Long") ## Idaho
+```
+

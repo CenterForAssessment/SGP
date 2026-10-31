@@ -1,0 +1,153 @@
+---
+title: "baselineSGP()"
+subtitle: "Analyze student data to produce student growth percentiles and coefficient matrices from a baseline (i.e. multiple cohort) norm group"
+toc: true
+---
+
+## Description
+
+Utility function/exemplar used to produce student growth percentiles using long formatted data like that provided by [`prepareSGP`](prepareSGP.html). Used as part of [`analyzeSGP`](analyzeSGP.html) for baseline referenced student growth percentile analyses.
+
+## Usage
+
+``` R
+ baselineSGP(sgp_object,
+        state=NULL,
+        years=NULL,
+        content_areas=NULL,
+        grades=NULL,
+        exclude.years=NULL,
+        sgp.config=NULL,
+        sgp.baseline.config=NULL,
+        sgp.baseline.panel.years=NULL,
+        sgp.percentiles.baseline.max.order=3,
+        return.matrices.only=FALSE,
+        calculate.baseline.sgps=TRUE,
+        calculate.simex.baseline=NULL,
+        sgp.quantiles="Percentiles",
+        goodness.of.fit.print=TRUE,
+        parallel.config=NULL,
+        SGPt=NULL,
+    ...)
+```
+
+## Arguments
+
+`sgp_object`{#sgp_object}
+
+:   An object of class `SGP` containing long formatted data in the `@Data` (from [`prepareSGP`](prepareSGP.html)) slot.
+
+`state`{#state}
+
+:   Acronym indicating state associated with the data for access to embedded knot and boundaries.
+
+`years`{#years}
+
+:   A vector indicating year(s) in which to produce baseline referenced student growth percentiles.
+
+`content_areas`{#content_areas}
+
+:   A vector indicating content area in which to produce baseline referenced student growth percentiles.
+
+`grades`{#grades}
+
+:   A vector indicating which grades to calculate baseline referenced student growth percentiles.
+
+`exclude.years`{#exclude.years}
+
+:   A vector indicating which years to exclude from the calculations?
+
+`sgp.config`{#sgp.config}
+
+:   If `years`, `content_areas`, and `grades` are missing, user can directly specify a list containing three vectors: `baseline.content.areas`, `baseline.panel.years`, and `baseline.grade.sequences`. This advanced option is helpful for analysis of non-traditional grade progressions and other special cases. See [`analyzeSGP`](analyzeSGP.html) for use cases.
+
+`sgp.baseline.config`{#sgp.baseline.config}
+
+:   A list containing three vectors: `sgp.content.areas`, `sgp.panel.years`, `sgp.grade.sequences` indicating how baseline student growth percentile analyses are to be conducted. In most cases this value will be calculated by default within the function but can be specified directly for advanced use cases. See source code for more detail on this configuration option.
+
+`sgp.baseline.panel.years`{#sgp.baseline.panel.years}
+
+:   A character vector indicating the years to be used for the calculation of baseline SGPs. Default is to use most recent five years of data.
+
+`sgp.percentiles.baseline.max.order`{#sgp.percentiles.baseline.max.order}
+
+:   Integer indicating the maximum order to calculate baseline student growth percentiles (regardless of maximum coefficient matrix order). Default is 3. To utilize the maximum matrix order, set to NULL.
+
+`return.matrices.only`{#return.matrices.only}
+
+:   Boolean variable indicating whether the function will only return baseline referenced coefficient matrices. Defaults to FALSE.
+
+`calculate.baseline.sgps`{#calculate.baseline.sgps}
+
+:   Boolean variable indicating whether the function will calculate baseline referenced student growth percentiles from baseline referenced coefficient matrices. Defaults to TRUE.
+
+`calculate.simex.baseline`{#calculate.simex.baseline}
+
+:   A list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed. Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
+
+`sgp.quantiles`{#sgp.quantiles}
+
+:   Argument to specify quantiles for quantile regression estimation. Default is Percentiles. User can additionally submit a vector of quantiles (between 0 and 1). Goodness of fit output only available currently for PERCENTILES.
+
+`goodness.of.fit.print`{#goodness.of.fit.print}
+
+:   Boolean variable indicating whether the function will export goodness of fit plots if baseline referenced student growth percentiles are calculated. Defaults to TRUE.
+
+`parallel.config`{#parallel.config}
+
+:   parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
+
+`SGPt`{#SGPt}
+
+:   Argument supplied to generate time dependent SGPs. Defaults to NULL/FALSE.
+
+`...`{#...}
+
+:   Arguments to be passed internally to [`studentGrowthPercentiles`](studentGrowthPercentiles.html) for finer control over SGP calculations.
+
+## Value
+
+If `return.matrices.only` is set to TRUE function returns a list containing the baseline referenced coefficient matrices. Otherwise function returns the SGP object provided with the sgp_object argument with the baseline referenced coefficient matrices, growth percentiles, etc. embedded.
+
+## Author(s)
+
+Adam Van Iwaarden <avaniwaarden@nciea.org>, Ben Domingue <ben.domingue@gmail.com> and Damian W. Betebenner <dbetebenner@nciea.org>
+
+## See Also
+
+[`prepareSGP`](prepareSGP.html), [`analyzeSGP`](analyzeSGP.html), [`combineSGP`](combineSGP.html)
+
+## Examples
+
+``` R
+## Not run: 
+##  Calculate baseline referenced SGPs
+## (using coefficient matrices embedded in SGPstateData)
+
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+Demonstration_SGP <-  baselineSGP(Demonstration_SGP)
+
+
+## Calculate baseline referenced coefficient matrices
+
+SGPstateData[["DEMO"]][["Baseline_splineMatrix"]] <- NULL
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+DEMO_Baseline_Matrices <- baselineSGP(
+                Demonstration_SGP,
+                return.matrices.only=TRUE,
+                calculate.baseline.sgps=FALSE)
+
+
+## Calculate baseline referenced coefficient matrices and
+## baseline referenced SGPs with 4 years of data
+
+SGPstateData[["DEMO"]][["Baseline_splineMatrix"]] <- NULL
+
+sgpData_LONG_4_YEAR <- subset(sgpData_LONG, YEAR!="2013_2014")
+
+Demonstration_SGP <- prepareSGP(sgpData_LONG_4_YEAR)
+Demonstration_SGP <- baselineSGP(Demonstration_SGP)
+
+## End(Not run)
+```
+

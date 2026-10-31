@@ -1,0 +1,41 @@
+---
+title: "SGP-package"
+subtitle: "SGP: Student Growth Percentiles & Percentile Growth Trajectories"
+toc: true
+---
+
+## Description
+
+SGP contains classes and functions to calculate student growth percentiles and percentile growth projections/trajectories following methodology found in Betebenner (2008, 2009). The package contains two primary functions, [`studentGrowthPercentiles`](studentGrowthPercentiles.html) and [`studentGrowthProjections`](studentGrowthProjections.html), and numerous higher level functions that make use of them including: [`prepareSGP`](prepareSGP.html), [`analyzeSGP`](analyzeSGP.html), [`combineSGP`](combineSGP.html), [`summarizeSGP`](summarizeSGP.html), [`visualizeSGP`](visualizeSGP.html) and [`outputSGP`](outputSGP.html). These functions are used to calculate and visualize student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment data. These norm- and criterion-referenced growth values are currently used in a number of states for many purposes including diagnostic and accountability. The functions employ quantile regression (using the `quantreg` package) to estimate the conditional density for current achievement using each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the student growth percentile analyses. These quantities are summarized in a variety of ways to describe student growth. Beginning with version 1.4-0.0, the SGP package also calculate time dependent SGPs (SGPt) and allows for student growth projections to be calculated across assessment transitions by equating the two tests.
+
+## Details
+
+  ----------- ------------
+  Package:    SGP
+  Type:       Package
+  Version:    2.3-2.2
+  Date:       2026-10-16
+  License:    GPL-3
+  LazyLoad:   yes
+  ----------- ------------
+
+Calculation of student growth percentiles and percentile growth trajectories/projections is typically performed by grade and subject. Data for growth percentile calculation must be specifically formatted. See [`sgpData`](https://rdrr.io/pkg/SGPdata/man/sgpData.html) for an example data set. Batch R syntax for performing analyses across all grades and years is provided in the examples of the [`studentGrowthPercentiles`](studentGrowthPercentiles.html) and [`studentGrowthProjections`](studentGrowthProjections.html) using the higher level functions [`prepareSGP`](prepareSGP.html), [`analyzeSGP`](analyzeSGP.html), [`combineSGP`](combineSGP.html), [`summarizeSGP`](summarizeSGP.html), and [`visualizeSGP`](visualizeSGP.html).
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <avaniwaarden@nciea.org>, Ben Domingue <ben.domingue@gmail.com> and Yi Shang <shangyi@gmail.com>
+
+## References
+
+Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan & L. A. Shepard (Eds.), *The Future of Test Based Accountability* (pp. 155-170). New York: Routledge.
+
+Betebenner, D. W. (2009). Norm- and criterion-referenced student growth. Educational Measurement: Issues and Practice, 28(4):42-51.
+
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek, *Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition* (pp. 439-450). New York: Routledge.
+
+Castellano, K. E. & McCaffrey, D. F. (2017). The Accuracy of Aggregate Student Growth Percentiles as Indicators of Educator Performance. Educational Measurement: Issues and Practice, 36(1):14-27.
+
+Koenker, R. (2005). *Quantile regression*. Cambridge: Cambridge University Press.
+
+Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.
+

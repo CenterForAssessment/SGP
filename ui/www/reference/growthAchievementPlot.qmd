@@ -1,0 +1,136 @@
+---
+title: "growthAchievementPlot()"
+subtitle: "growthAchievementPlot for SGP"
+toc: true
+---
+
+## Description
+
+Function to create growth and achievement plots depicting system level results associated with student growth percentile results. The charts show, simultaneously, norm- and criterion-referenced student achievement (i.e., status) as well as norm- and criterion-referenced student growth. These charts are those shown on the cover of the December 2009 Issue of *Educational Measurement: Issues and Practice*. See Betebenner (2009) and Betebenner (2012) for more details
+
+## Usage
+
+``` R
+growthAchievementPlot(
+    gaPlot.sgp_object,
+    gaPlot.students=NULL,
+    gaPlot.percentile_trajectories,
+    gaPlot.achievement_percentiles=c(.01, seq(.05, .95, by=.05), .99),
+    gaPlot.show.scale.transformations=TRUE,
+    gaPlot.grade_range,
+    gaPlot.max.order.for.progression=NULL,
+    gaPlot.start.points="Achievement Level Cuts",
+    gaPlot.back.extrapolated.cuts=NULL,
+    gaPlot.subtitle = TRUE,
+    gaPlot.SGPt=NULL,
+    state,
+    content_area,
+    year,
+    format="print",
+    baseline=FALSE,
+    equated=NULL,
+    output.format="PDF",
+    output.folder,
+    assessment.name = NULL)
+```
+
+## Arguments
+
+`gaPlot.sgp_object`{#gaPlot.sgp_object}
+
+:   The sgp_object containing system information for constructing the growth and achievement plot. Object is calculated using [`abcSGP`](abcSGP.html) or (at least) [`prepareSGP`](prepareSGP.html) followed by [`analyzeSGP`](analyzeSGP.html). The function requires coefficient matrices in order to display percentile growth trajectories.
+
+`gaPlot.students`{#gaPlot.students}
+
+:   Either NULL (the default) or a list of student IDs for whom one wishes to generate growth and achievement plots.
+
+`gaPlot.percentile_trajectories`{#gaPlot.percentile_trajectories}
+
+:   A vector indicating the growth percentile trajectories to be depicted on the plot. If missing, the percentile trajectories will be the trajectories associated with the state supplied. If no state is supplied, the percentile trajectories will be 10, 35, 50, 65, 90.
+
+`gaPlot.achievement_percentiles`{#gaPlot.achievement_percentiles}
+
+:   A vector of percentiles that achievement (i.e., status) percentiles will be depicted across the range of grades.
+
+`gaPlot.show.scale.transformations`{#gaPlot.show.scale.transformations}
+
+:   A Boolean arguments (defaults to TRUE) indicating whether to show the scale as a vertical axis if a scale transformation is applied to the supplied data.
+
+`gaPlot.grade_range`{#gaPlot.grade_range}
+
+:   The grade range for which to demonstrate plot. If missing, function uses supplied state to derive grade range.
+
+`gaPlot.max.order.for.progression`{#gaPlot.max.order.for.progression}
+
+:   The maximum coefficient matrix order to use for each progression. Default is NULL which utilizes the maximum order available with the coefficient matrices.
+
+`gaPlot.start.points`{#gaPlot.start.points}
+
+:   Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the growth percentiles trajectories will start in the growth achievement plots.
+
+`gaPlot.back.extrapolated.cuts`{#gaPlot.back.extrapolated.cuts}
+
+:   Scale score in final year for which nth percentile growth culminates from back-extrapolated scale scores.
+
+`gaPlot.subtitle`{#gaPlot.subtitle}
+
+:   Boolean variable (defaults to TRUE) indicating whether subtitle is printed on the growth achievement chart indicating student starting point.
+
+`gaPlot.SGPt`{#gaPlot.SGPt}
+
+:   A boolean variable indicating whether time dependent coefficient matrices (SGPt) are to be used in student growth projection calculation.
+
+`state`{#state}
+
+:   A two letter acronym for the state associated with the supplied data.
+
+`content_area`{#content_area}
+
+:   A character vector indicating the content area to produce the growth and achievement chart. Note that the supplied content area must match that used in the internal labeling of content area for the sgp_object.
+
+`year`{#year}
+
+:   The year for which to produce the growth and achievement plots.
+
+`format`{#format}
+
+:   Either "print" (the default) for light background or "presentation" for dark background slides.
+
+`baseline`{#baseline}
+
+:   Boolean variable (defaults to FALSE) indicating whether to create percentile trajectories using baseline referenced coefficient matrices.
+
+`equated`{#equated}
+
+:   Boolean variable (defaults to FALSE) indicating whether to utilize linked matrices to generate growth and achievement plots.
+
+`output.format`{#output.format}
+
+:   A character vector indicating which output format to use. Currently support 'PDF' (the default) and 'PNG'. The call to growthAchievementPlot in [`visualizeSGP`](visualizeSGP.html) outputs in both formats.
+
+`output.folder`{#output.folder}
+
+:   A character vector indicating where to put the produced growth and achievement plot.
+
+`assessment.name`{#assessment.name}
+
+:   A character vector indicating the assessment.name. If NULL, the supplied state is used to determine the assessment.name.
+
+## Details
+
+Typical use of the function is as part of `visualizeSGP` function. However, function can be used to produce growth and achievement charts.
+
+## Value
+
+Function creates a growth and achievement chart and writes the result as a PDF to `output.folder`.
+
+## References
+
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek, *Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition* (pp. 439-450). New York: Routledge.
+
+Betebenner, D. W. (2009). Norm- and criterion-referenced student growth. Educational Measurement: Issues and Practice, 28(4):42-51.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>
+

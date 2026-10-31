@@ -1,5 +1,4 @@
-SGP
-===
+# SGP <a href="https://sgp.io"><img src="man/figures/logo.svg" align="right" height="139" alt="SGP hex logo" /></a>
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6471237.svg)](https://doi.org/10.5281/zenodo.6471237)
 [![R-CMD-check](https://github.com/CenterForAssessment/SGP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CenterForAssessment/SGP/actions/workflows/R-CMD-check.yaml)

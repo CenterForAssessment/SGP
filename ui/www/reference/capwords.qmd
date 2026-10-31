@@ -1,0 +1,59 @@
+---
+title: "capwords()"
+subtitle: "Function for converting all caps to mixed case. Useful in data cleaning."
+toc: true
+---
+
+## Description
+
+The function capwords converts characters to mixed case character as intelligently as possible and leading/trailing spaces.
+
+## Usage
+
+``` R
+capwords(x,
+    special.words = c("ELA","I", "II", "III", "IV",  "CCSD", "CUSD", "CUD", "USD", "PSD", 
+          "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", 
+          "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", 
+          "WIDA", "ACCESS", "WIDA-ACCESS"))
+```
+
+## Arguments
+
+`x`{#x}
+
+:   A character string to be converted to mixed case.
+
+`special.words`{#special.words}
+
+:   A character vector (see default above), specifying words to not convert to mixed case.
+
+## Value
+
+Returns a mixed case character string.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>
+
+## Examples
+
+``` R
+capwords("TEST") ## Test
+capwords("TEST1 TEST2") ## Test1 Test2
+capwords("O'NEIL") ## O'Neil
+capwords("JOHN'S") ## John's
+
+## Use sapply for converting character vectors
+
+test.vector <- paste("TEST", 1:10, sep="")
+sapply(test.vector, capwords)
+
+
+## With factors, convert levels instead of the entire vector
+
+test.factor <- factor(paste("TEST", rep(letters[1:10], each=50)))
+levels(test.factor) <- sapply(levels(test.factor), capwords)
+levels(test.factor)
+```
+

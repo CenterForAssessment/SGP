@@ -1,0 +1,108 @@
+---
+title: "studentGrowthPlot()"
+subtitle: "Create a student growth and achievement chart"
+toc: true
+---
+
+## Description
+
+Function used to produce individual student growth and achievement chart (an achievement time lines indicating student growth) based upon output from student growth percentile and student growth projection analyses. Function is integrated with `SGPstateData` to accommodate state specific scales and nomenclature including performance level names. See Betebenner (2012) for discussion
+
+## Usage
+
+``` R
+studentGrowthPlot(Scale_Scores,
+    Plotting_Scale_Scores, 
+    Achievement_Levels, 
+    SGP, 
+    SGP_Levels, 
+    Grades,
+    Content_Areas,
+    Cuts,
+    Plotting_Cuts,
+    SGP_Targets,
+    SGP_Scale_Score_Targets,
+    Plotting_SGP_Scale_Score_Targets,
+    Cutscores,
+    Years,
+    Report_Parameters)
+```
+
+## Arguments
+
+`Scale_Scores`{#Scale_Scores}
+
+:   A vector of historical scale scores.
+
+`Plotting_Scale_Scores`{#Plotting_Scale_Scores}
+
+:   A vector of scale scores used as the vertical coordinates for plotting. If supplied, `Scale_Scores` are used for text and Plotting_Scale_Scores are used for the actual coordinates.
+
+`Achievement_Levels`{#Achievement_Levels}
+
+:   A vector of historical performance levels.
+
+`SGP`{#SGP}
+
+:   A vector of historical student growth percentiles.
+
+`SGP_Levels`{#SGP_Levels}
+
+:   A vector of historical growth (SGP) levels (e.g., low, typical, high).
+
+`Grades`{#Grades}
+
+:   A vector of historical grades student was tested in.
+
+`Content_Areas`{#Content_Areas}
+
+:   A vector of historical content areas student was tested in.
+
+`Cuts`{#Cuts}
+
+:   A list of cuts scores for NY1, NY2, and NY3.
+
+`Plotting_Cuts`{#Plotting_Cuts}
+
+:   A list of plotting cuts scores for NY1, NY2, and NY3. Plotting cuts are identical to Cuts for states with a vertical scale and are transformed for non-vertical scale states.
+
+`SGP_Targets`{#SGP_Targets}
+
+:   A list of CUKU, CUKU_Current, MUSU, MUSU_Current targets.
+
+`SGP_Scale_Score_Targets`{#SGP_Scale_Score_Targets}
+
+:   A list of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets.
+
+`Plotting_SGP_Scale_Score_Targets`{#Plotting_SGP_Scale_Score_Targets}
+
+:   A list of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets for plotting that are transformed when no vertical scale exists.
+
+`Cutscores`{#Cutscores}
+
+:   A data.frame of long formatted achievement level cutscores.
+
+`Years`{#Years}
+
+:   A vector of years corresponding to supplied scale scores.
+
+`Report_Parameters`{#Report_Parameters}
+
+:   A list containing arguments: `Current_Year`, `Content_Area`, `State`, `Denote_Content_Area`, `SGP_Targets`, and `Configuration`.
+
+## Details
+
+Function currently used as part of SGP package to produce student growth charts for states. Function is usually called from the higher level function [`visualizeSGP`](visualizeSGP.html) which allows for the creation of a student growth plot catalog for each school with student reports organized by grade and student name.
+
+## Value
+
+Returns a student growth plot graphical object that is usually exported in either PDF or PNG format.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>
+
+## References
+
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek, *Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition* (pp. 439-450). New York: Routledge.
+

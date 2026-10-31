@@ -1,0 +1,266 @@
+---
+title: "updateSGP()"
+subtitle: "Function to update SGP object with additional year's analyses"
+toc: true
+---
+
+## Description
+
+updateSGP takes an object of class SGP and adds in additional data (usually an additional year's data) and runs analyses on that additional year's data including the results in the supplied SGP object.
+
+## Usage
+
+``` R
+updateSGP(
+    what_sgp_object=NULL,
+    with_sgp_data_LONG=NULL,
+    with_sgp_data_INSTRUCTOR_NUMBER=NULL,
+    state=NULL,
+    steps=c("prepareSGP",
+        "analyzeSGP",
+        "combineSGP",
+        "summarizeSGP",
+        "visualizeSGP",
+        "outputSGP"),
+    years=NULL,
+    content_areas=NULL,
+    grades=NULL,
+    sgp.percentiles=TRUE,
+    sgp.projections=TRUE,
+    sgp.projections.lagged=TRUE,
+    sgp.percentiles.baseline=TRUE,
+    sgp.projections.baseline=TRUE,
+    sgp.projections.lagged.baseline=TRUE,
+    sgp.test.cohort.size=NULL,
+    return.sgp.test.results=FALSE,
+    simulate.sgps=TRUE,
+    save.old.summaries=NULL,
+    save.intermediate.results=TRUE,
+    calculate.simex=NULL,
+    calculate.simex.baseline=NULL,
+    sgp.use.my.coefficient.matrices=NULL,
+    sgp.target.scale.scores=FALSE,
+    sgp.target.scale.scores.only=FALSE,
+    overwrite.existing.data=TRUE,
+    update.old.data.with.new=TRUE,
+    output.updated.data=TRUE,
+    sgPlot.demo.report=TRUE,
+    plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+    outputSGP.output.type=c("LONG_Data",
+                "LONG_FINAL_YEAR_Data",
+                "WIDE_Data",
+                "INSTRUCTOR_Data"),
+    outputSGP.directory="Data",
+    sgp.config=NULL,
+    goodness.of.fit.print=TRUE,
+    parallel.config=NULL,
+    SGPt=NULL,
+    sgp.percentiles.equated=NULL,
+    sgp.percentiles.equating.method=NULL,
+    sgp.percentiles.calculate.sgps=TRUE,
+    fix.duplicates=NULL,
+    get.cohort.data.info=FALSE,
+    ...)
+```
+
+## Arguments
+
+`what_sgp_object`{#what_sgp_object}
+
+:   The SGP object to which the additional data will be added and analyzed. This object must be specified.
+
+`with_sgp_data_LONG`{#with_sgp_data_LONG}
+
+:   The additional data in LONG format to be added to the supplied SGP object. The additional data must be in the same form as the data in the \@Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
+
+`with_sgp_data_INSTRUCTOR_NUMBER`{#with_sgp_data_INSTRUCTOR_NUMBER}
+
+:   The addition INSTRUCTOR_NUMBER data in LONG format to be added to the supplied SGP object. The additional data must be in the same format as the data in the \@Data_Supplementary\[\['INSTRUCTOR_NUMBER'\]\] slot. Default is NULL, no INSTRUCTOR_NUMBER data is supplied.
+
+`state`{#state}
+
+:   The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied.
+
+`steps`{#steps}
+
+:   A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: [`prepareSGP`](prepareSGP.html), [`analyzeSGP`](analyzeSGP.html), [`combineSGP`](combineSGP.html), [`summarizeSGP`](summarizeSGP.html), [`visualizeSGP`](visualizeSGP.html), [`outputSGP`](outputSGP.html).
+
+`years`{#years}
+
+:   If only 'what_sgp_object' is supplied, years specifies the years to be run among those in the provided sgp_object.
+
+`content_areas`{#content_areas}
+
+:   If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run among those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
+
+`grades`{#grades}
+
+:   A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. If missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses. This argument is passed to either [`abcSGP`](abcSGP.html) or [`analyzeSGP`](analyzeSGP.html) depending on the update context.
+
+`sgp.percentiles`{#sgp.percentiles}
+
+:   Boolean variable indicating whether to calculate student growth percentiles (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+
+`sgp.projections`{#sgp.projections}
+
+:   Boolean variable indicating whether to calculate student growth projections (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+
+`sgp.projections.lagged`{#sgp.projections.lagged}
+
+:   Boolean variable indicating whether to calculate lagged student growth projections often used for growth to standard analyses (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+
+`sgp.percentiles.baseline`{#sgp.percentiles.baseline}
+
+:   Boolean variable indicating whether to calculate baseline student growth percentiles and/or coefficient matrices (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+
+`sgp.projections.baseline`{#sgp.projections.baseline}
+
+:   Boolean variable indicating whether to calculate baseline student growth projections (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+
+`sgp.projections.lagged.baseline`{#sgp.projections.lagged.baseline}
+
+:   Boolean variable indicating whether to calculate lagged baseline student growth projections (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+
+`sgp.test.cohort.size`{#sgp.test.cohort.size}
+
+:   Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles. Intended to be used as a test of the desired analyses to be run. The default, NULL, uses no restrictions (no tests are performed, and analyses use the entire cohort of students).
+
+`return.sgp.test.results`{#return.sgp.test.results}
+
+:   Boolean variable passed to [`analyzeSGP`](analyzeSGP.html) and [`studentGrowthPercentiles`](studentGrowthPercentiles.html) indicating whether the results from the cohort sample subset (if specified using the above argument) should be returned for inspection. Defaults to FALSE. If TRUE, only the sample subset of the data used will be returned in the SGP object's \@Data slot. Alternatively, user can supply the character "ALL_DATA" to the argument to return the entire original data.
+
+`simulate.sgps`{#simulate.sgps}
+
+:   Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). Test CSEM data must be available for simulation and included in `SGPstateData`. This argument must be set to TRUE for confidence interval construction. Defaults to TRUE. This argument is passed to [`analyzeSGP`](analyzeSGP.html).
+
+`save.old.summaries`{#save.old.summaries}
+
+:   A Boolean argument (defaults to NULL/TRUE which will save the `@Summary` slot before creating new summaries) indicating whether the call to [`summarizeSGP`](summarizeSGP.html) should save existing summaries in the `@Summary` slot. If `overwrite.existing.data` is TRUE, `save.old.summaries` will default to FALSE unless explictly set to TRUE.
+
+`save.intermediate.results`{#save.intermediate.results}
+
+:   A Boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
+
+`calculate.simex`{#calculate.simex}
+
+:   A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Returns both SIMEX adjusted SGP (`SGP_SIMEX`) as well as the percentile ranked SIMEX SGP (`RANK_SIMEX`) values as suggested by Castellano and McCaffrey (2017). Defaults to NULL, no simex calculations performed. Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
+
+`calculate.simex.baseline`{#calculate.simex.baseline}
+
+:   A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed. Alternatively, setting the argument to TRUE uses the same defaults as above along with `simex.use.my.coefficient.matrices = TRUE`. This argument is passed to [`analyzeSGP`](analyzeSGP.html).
+
+`sgp.use.my.coefficient.matrices`{#sgp.use.my.coefficient.matrices}
+
+:   A Boolean argument (defaults to FALSE/NULL) passed to [`analyzeSGP`](analyzeSGP.html) indicating whether previous coefficient matrices should be used as part of the analyses.
+
+`sgp.target.scale.scores`{#sgp.target.scale.scores}
+
+:   A Boolean argument (defaults to FALSE/NULL) passed to [`combineSGP`](combineSGP.html) indicating whether to calculate scale scores associated with SGP targets as part of the analyses.
+
+`sgp.target.scale.scores.only`{#sgp.target.scale.scores.only}
+
+:   A Boolean argument (defaults to FALSE/NULL) passed to [`combineSGP`](combineSGP.html) indicating whether ONLY to calculate scale scores associated with SGP targets as part of the [`combineSGP`](combineSGP.html).
+
+`overwrite.existing.data`{#overwrite.existing.data}
+
+:   A Boolean argument (defaults to TRUE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
+
+`update.old.data.with.new`{#update.old.data.with.new}
+
+:   A Boolean argument (defaults to TRUE) indicating whether updateSGP should add new data supplied in argument with_SGP_Data_LONG to existing longitudinal data or reduce data set to run analyses on only that which is provided.
+
+`output.updated.data`{#output.updated.data}
+
+:   A Boolean argument (defaults to TRUE) indicating whether updateSGP should use [`outputSGP`](outputSGP.html) to save the new data added in `with_sgp_data_LONG` separately in a new directory called "Updated_Data". Only relevant when 'overwrite.existing.data is FALSE and sgp.use.my.coefficient.matrices is TRUE. Output type controlled by the `outputSGP.output.type` argument.
+
+`sgPlot.demo.report`{#sgPlot.demo.report}
+
+:   A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
+
+`plot.types`{#plot.types}
+
+:   A character vector (defaults to 'c([`bubblePlot`](bubblePlot.html), [`studentGrowthPlot`](studentGrowthPlot.html), [`growthAchievementPlot`](growthAchievementPlot.html))') indicating what plot types to export from [`visualizeSGP`](visualizeSGP.html).
+
+`outputSGP.output.type`{#outputSGP.output.type}
+
+:   Specifies the type of output generated as part of intermediate step when adding addition data and using old coefficient matrices. Defaults are the defaults of outputSGP, `LONG_Data`, `LONG_FINAL_YEAR_Data`, `WIDE_Data`, and `INSTRUCTOR_Data`.
+
+`outputSGP.directory`{#outputSGP.directory}
+
+:   A a file path indicating where to save output files. Defaults to `Data`.
+
+`sgp.config`{#sgp.config}
+
+:   List of analysis control parameters passed to [`analyzeSGP`](analyzeSGP.html). For details on this argument see document for that function.
+
+`goodness.of.fit.print`{#goodness.of.fit.print}
+
+:   A Boolean variable passed to [`analyzeSGP`](analyzeSGP.html) indicating whether to print goodness of fit plots.
+
+`parallel.config`{#parallel.config}
+
+:   Parallel computation configuration passed to [`abcSGP`](abcSGP.html), [`analyzeSGP`](analyzeSGP.html), [`combineSGP`](combineSGP.html), and [`summarizeSGP`](summarizeSGP.html). See documentation under those functions for details.
+
+`SGPt`{#SGPt}
+
+:   Argument (defaults to NULL) indicating whether time dependent student growth percentile (SGPt) are calculate.
+
+`sgp.percentiles.equated`{#sgp.percentiles.equated}
+
+:   Argument (defaults to NULL) passed to [`abcSGP`](abcSGP.html) and [`analyzeSGP`](analyzeSGP.html) indicating whether equated SGP are to be calculated.
+
+`sgp.percentiles.equating.method`{#sgp.percentiles.equating.method}
+
+:   Character vector argument passed to [`analyzeSGP`](analyzeSGP.html) indicating type(s) of equating method to used if `sgp.percentiles.equated=TRUE`. Default is NULL indicating 'equipercentile' equating. Options include 'identity', 'mean', 'linear', and 'equipercentile'.
+
+`sgp.percentiles.calculate.sgps`{#sgp.percentiles.calculate.sgps}
+
+:   Boolean argument passed to [`abcSGP`](abcSGP.html) and [`analyzeSGP`](analyzeSGP.html) indicating whether to produce student growth percentiles as part of call to [`studentGrowthPercentiles`](studentGrowthPercentiles.html). Default is TRUE. Setting to FALSE produces only coefficient matrices.
+
+`fix.duplicates`{#fix.duplicates}
+
+:   Argument to control how `analyzeSGP` and `combineSGP` deal with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID. The function currently warns of duplicate records and doesn't modify data. If set to 'KEEP.ALL', `analyzeSGP` tries to fix the duplicate individual records by adding a '\_DUP\_\*\*\*' suffix to the duplicate ID before running [`studentGrowthPercentiles`](studentGrowthPercentiles.html) in order to create unique records based upon the key. If needed, the `@Data` slot will be extended as necessary to accomodate additional student records and SGP results in `combineSGP`.
+
+`get.cohort.data.info`{#get.cohort.data.info}
+
+:   Boolean argument passed to `analyzeSGP` indicating whether to calculate norm group cohort counts.
+
+`...`{#...}
+
+:   Arguments to be passed to [`abcSGP`](abcSGP.html) for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
+
+## Value
+
+Returns and object of class SGP including additional analyses.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>
+
+## See Also
+
+[`prepareSGP`](prepareSGP.html) and [`abcSGP`](abcSGP.html)
+
+## Examples
+
+``` R
+## Not run: 
+### Run analyses on all but final year's of data
+
+Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR 
+Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR 
+
+Demonstration_SGP <- abcSGP(
+        sgp_object=Demonstration_Data_LONG,
+        sgPlot.demo.report=TRUE)
+
+
+### Run updateSGP on Demonstration_SGP and the 2013_2014 data
+
+Demonstration_SGP <- updateSGP(
+        what_sgp_object=Demonstration_SGP,
+        with_sgp_data_LONG=Demonstration_Data_LONG_2013_2014)
+
+## End(Not run)
+```
+

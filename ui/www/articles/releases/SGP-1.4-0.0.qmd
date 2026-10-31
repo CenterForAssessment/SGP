@@ -1,0 +1,36 @@
+---
+title: "SGP 1.4-0.0"
+date: "2016-01-10"
+toc: true
+---
+
+
+```{r include = FALSE}
+    library(SGP)
+
+    is_html_output = function() {
+        knitr::opts_knit$get("rmarkdown.pandoc.to")=="html"
+    }
+
+    knitr::opts_chunk$set(
+        collapse=TRUE,
+        comment="",
+        prompt=TRUE,
+        fig.dpi=96)
+
+    if (is_html_output()) {
+        options(width=1000)
+    }
+```
+
+
+This is the 1.4 release of the SGP package posted to CRAN. This is the first release to be officially [tagged on GitHub](https://github.com/CenterForAssessment/SGP/releases/tag/636943f). Download from GitHub via:
+
+```{r eval=FALSE}
+devtools::install_github("CenterForAssessment/SGP", ref="636943f")
+```
+
+To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-4-0-0).
+
+
+Feel free to drop me a line with any comments, feature requests, or ideas. And give us a shout-out Tweet using the Twitter button in the upper right!

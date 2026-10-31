@@ -1,0 +1,124 @@
+---
+title: "outputSGP()"
+subtitle: "Output student data and SGP results for a variety of purposes"
+toc: true
+---
+
+## Description
+
+Utility function used to export student data and SGP results for a variety of purposes. Current functionality exports data in wide format for data visualization purposes. See source code for detailed functionality.
+
+## Usage
+
+``` R
+outputSGP(sgp_object,
+    state=NULL,
+        output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", 
+            "INSTRUCTOR_Data"),
+        baseline.sgps=FALSE,
+        outputSGP_SUMMARY.years=NULL,
+        outputSGP_SUMMARY.content_areas=NULL,
+        outputSGP_INDIVIDUAL.years=NULL,
+        outputSGP_INDIVIDUAL.content_areas=NULL,
+        outputSGP.anonymize=FALSE,
+        outputSGP.student.groups=NULL,
+        outputSGP.directory="Data",
+    outputSGP.translate.names=TRUE,
+    outputSGP.projection.years.for.target=3,
+    outputSGP.pass.through.variables=NULL)
+```
+
+## Arguments
+
+`sgp_object`{#sgp_object}
+
+:   An object of class SGP containing data to be exported.
+
+`state`{#state}
+
+:   Acronym for which state is to be used for the lagged projections and growth to standard analyses. Function will try to guess state name from passed `sgp_object` is missing.
+
+`years`{#years}
+
+:   A vector indicating the years to be included in the output. Default is to use all years.
+
+`content_areas`{#content_areas}
+
+:   A vector indicating the content areas to be included in the output. Default is to use all content areas.
+
+`output.type`{#output.type}
+
+:   A character vector indicating what output type is requested. Currently `LONG_Data`, `WIDE_Data`, `INSTRUCTOR_Data`, `SchoolView`, `RLI` are supported modes of output. `LONG_Data` exports the contents of the \@Data slot in a pipe delimited format. `LONG_FINAL_YEAR_Data` exports the contents of the last year of the \@Data slot in a pipe delimited format. `WIDE_Data` exports a reshaped version of the \@Data slot where each row is a unique student record. `INSTRUCTOR_Data` uses the `@Data_Supplementary$INSTRUCTOR_NUMBER` table to export a long student by instructor number table. `SchoolView` exports tables used for representation in SchoolView. `RLI` exports used for representation by RLI. The default exports `LONG_Data`, `LONG_FINAL_YEAR_Data`, `WIDE_Data` and `INSTRUCTOR_Data`.
+
+`baseline.sgps`{#baseline.sgps}
+
+:   Boolean vector indicating whether to output baseline SGPs for cohort referenced SGPs.
+
+`outputSGP_SUMMARY.years`{#outputSGP_SUMMARY.years}
+
+:   A character vector indicating the year to be used for output file construction for summary tables.
+
+`outputSGP_SUMMARY.content_areas`{#outputSGP_SUMMARY.content_areas}
+
+:   A character vector indicating the content areas to be used for output file construction for summary tables.
+
+`outputSGP_INDIVIDUAL.years`{#outputSGP_INDIVIDUAL.years}
+
+:   A character vector indicating the year to be used for output file construction for individual level file.
+
+`outputSGP_INDIVIDUAL.content_areas`{#outputSGP_INDIVIDUAL.content_areas}
+
+:   A character vector indicating the content areas to be used for output file construction for individual level file.
+
+`outputSGP.anonymize`{#outputSGP.anonymize}
+
+:   A Boolean variable indicating whether to anonymize output files.
+
+`outputSGP.student.groups`{#outputSGP.student.groups}
+
+:   A list of variables to be used for student groups in individual and summary tables.
+
+`outputSGP.directory`{#outputSGP.directory}
+
+:   A a file path indicating where to save output files. Defaults to `Data`.
+
+`outputSGP.translate.names`{#outputSGP.translate.names}
+
+:   A Boolean argument, defaults to TRUE, indicating whether data output should refer to 'names.provided' or 'names.sgp' in \@Names slot of supplied SGP object. This argument allows for the the conversion of variable naming conventions from the SGP package back to that used by the state/organization.
+
+`outputSGP.projection.years.for.target`{#outputSGP.projection.years.for.target}
+
+:   An integer argument indicating what projection to supply with regard to the number of years projected forward.
+
+`outputSGP.pass.through.variables`{#outputSGP.pass.through.variables}
+
+:   A character vector of variables in \@Data that are to be merged with output in RLI output.type. Default is NULL or no.
+
+## Value
+
+Function writes data in multiple formats including .Rdata, .txt (pipe delimited) and zipped versions of .txt.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>
+
+## See Also
+
+[`abcSGP`](abcSGP.html), [`prepareSGP`](prepareSGP.html), [`analyzeSGP`](analyzeSGP.html), [`combineSGP`](combineSGP.html), [`summarizeSGP`](summarizeSGP.html)
+
+## Examples
+
+``` R
+## Not run: 
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP)
+Demonstration_SGP <- combineSGP(Demonstration_SGP)
+outputSGP(Demonstration_SGP)
+
+## Output current year
+
+outputSGP(Demonstration_SGP, output.type="LONG_FINAL_YEAR_Data")
+
+## End(Not run)  
+```
+
