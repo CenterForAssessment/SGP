@@ -35,7 +35,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Cairo (Imports) needs X11 headers/libraries on macOS
       - name: Install XQuartz

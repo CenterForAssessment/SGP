@@ -1,0 +1,80 @@
+---
+title: "gofPrint()"
+subtitle: "Function to produce Goodness of Fit plots from a SGP object."
+toc: true
+---
+
+## Description
+
+The function gofPrint is used to output Goodness of Fit plots from R grobs stored in a SGP object.
+
+## Usage
+
+``` R
+  gofPrint(
+    sgp_object,
+    years = NULL,
+    content_areas = NULL,
+    grades = NULL,
+    sgp_types = NULL,
+    norm_group = NULL,
+    output_format = c("PDF", "SVG", "DECILE_TABLES"),
+    output_path = "Goodness_of_Fit",
+    ...)
+```
+
+## Arguments
+
+`sgp_object`{#sgp_object}
+
+:   SGP object resulting from SGP analyses
+
+`years`{#years}
+
+:   The academic year(s) for which fit plots should be produced
+
+`content_areas`{#content_areas}
+
+:   The content area(s) for which fit plots should be produced
+
+`grades`{#grades}
+
+:   The grade(s) for which fit plots should be produced
+
+`sgp_types`{#sgp_types}
+
+:   The SGP type for which fit plots should be produdced (e.g., cohort or baseline referenced, SIMEX adjusted, etc.).
+
+`norm_group`{#norm_group}
+
+:   The specific norm group (cohort or course progression) for which fit plots should be produced
+
+`output_format`{#output_format}
+
+:   The graphical file type of plots that should be produced and/or the decile tables as a .Rdata file. Defaults are PDF, SVG and decile tables. PNG file type is also available.
+
+`output_path`{#output_path}
+
+:   Directory path for plot/table output
+
+`...`{#...}
+
+:   Additional arguments to pass to `svglite`
+
+## Value
+
+Returns a graphical output of the fit plot(s) requested based on the arguments provided. Can also save the decile table data in Rdata format.
+
+## Author(s)
+
+Adam Van Iwaarden <avaniwaarden@nciea.org> and Damian W. Betebenner <dbetebenner@nciea.org>
+
+## Examples
+
+``` R
+  ## Not run: 
+    gofPrint(Demonstration_SGP)
+  
+## End(Not run)
+```
+

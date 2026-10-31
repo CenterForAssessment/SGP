@@ -1,0 +1,61 @@
+---
+title: "courseProgressionSGP()"
+subtitle: "Identify potential course progressions for SGP analyses"
+toc: true
+---
+
+## Description
+
+Utility function used to analyze supplied long data or an existing SGP class object to identify potential course progressions suitable for analysis with [`analyzeSGP`](analyzeSGP.html), [`studentGrowthPercentiles`](studentGrowthPercentiles.html), etc. See examples for more information.
+
+## Usage
+
+``` R
+courseProgressionSGP(
+    sgp_object,
+    lag.direction=c("FORWARD", "BACKWARD"),
+    year)
+```
+
+## Arguments
+
+`sgp_object`{#sgp_object}
+
+:   Either a panel data set in long form or an object of class SGP. See embedded [`sgpData_LONG`](https://rdrr.io/pkg/SGPdata/man/sgpData_LONG.html) data set for an exemplar.
+
+`lag.direction`{#lag.direction}
+
+:   Character string indicating whether the progressions should be produced prospectively or retrospectively.
+
+`year`{#year}
+
+:   Character indicating the value of YEAR that is the focus of analysis.
+
+## Value
+
+Function returns a nested `list` class object. The final node of each nested list is a `data.table` which summarizes the number of students with a particular GRADE by CONTENT_AREA by YEAR course progression
+
+## Author(s)
+
+Adam Van Iwaarden <avaniwaarden@nciea.org> and Damian W. Betebenner <dbetebenner@nciea.org>
+
+## See Also
+
+[`sgpData_LONG`](https://rdrr.io/pkg/SGPdata/man/sgpData_LONG.html)
+
+## Examples
+
+``` R
+## Not run: 
+## Run courseProgressionSGP on the subset of the long data that contains
+## ONLY mathematics related records (would realistically also contain EOCT math courses)
+Math_Data <- subset(SGPdata::sgpData_LONG, CONTENT_AREA == "MATHEMATICS")
+Math_Progressions <- courseProgressionSGP(Math_Data, lag.direction= "BACKWARD", year="2015_2016")
+
+##  Examine results for Adcademic Year 2015-2016, 5th grade Mathematics.
+Math_Progressions[['BACKWARD']][['2015_2016']][['MATHEMATICS.05']]
+Math_Progressions[['BACKWARD']][['2015_2016']][['MATHEMATICS.05']][COUNT>100]
+
+## End(Not run)
+```
+

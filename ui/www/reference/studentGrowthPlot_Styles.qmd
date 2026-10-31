@@ -1,0 +1,164 @@
+---
+title: "studentGrowthPlot_Styles()"
+subtitle: "studentGrowthPlot_Styles providing base templates for the core studentGrowthPlot function"
+toc: true
+---
+
+## Description
+
+Function includes five "styles" associated with [`studentGrowthPlot`](studentGrowthPlot.html) to create PDF student growth plots depicting the growth and achievement for an individual student over time. The five styles display one to five content area student growth plots on a single page. The one, two, and three content area plots are rendered on 8.5 by 11 PDFs and the four and five content area plots are rendered on 11 by 17 PDFs. These charts are currently being used in multiple states to report student growth results. This function is called by [`visualizeSGP`](visualizeSGP.html) to generate individual student reports. This function may expand in the future to incorporate other possible individual student reports.
+
+## Usage
+
+``` R
+studentGrowthPlot_Styles(
+           sgPlot.data,
+           sgPlot.sgp_object,
+           sgPlot.cutscores,
+           state,
+           last.year,
+           content_areas,
+           districts,
+           schools,
+           reports.by.student,
+           reports.by.instructor,
+           reports.by.school,
+           sgPlot.years,
+           sgPlot.demo.report,
+           sgPlot.folder,
+           sgPlot.folder.names,
+           sgPlot.anonymize,
+           sgPlot.front.page,
+           sgPlot.header.footer.color,
+           sgPlot.fan,
+       sgPlot.sgp.targets,
+           sgPlot.cleanup,
+           sgPlot.baseline,
+       sgPlot.sgp.targets.timeframe,
+           sgPlot.zip,
+           sgPlot.output.format,
+           sgPlot.linkages)
+```
+
+## Arguments
+
+`sgPlot.data`{#sgPlot.data}
+
+:   Wide formatted individual student report data used to produce student growth plots. To view structure of wide formatted data, utilize the `sgPlot.save.sgPlot.data` option with [`visualizeSGP`](visualizeSGP.html) to save wide formatted student growth plot data.
+
+`sgPlot.sgp_object`{#sgPlot.sgp_object}
+
+:   SGP object containing coefficient matrices and knots and boundaries for percentile trajectory calculations associated with JSON output.
+
+`sgPlot.cutscores`{#sgPlot.cutscores}
+
+:   List of cutscores, possibly transformed, for plotting studentGrowthPlots
+
+`state`{#state}
+
+:   Acronym indicating state associated with the summaries for access to assessment program information embedded in `SGPstateData`.
+
+`last.year`{#last.year}
+
+:   Argument indicating the final year represented in the student growth plots.
+
+`content_areas`{#content_areas}
+
+:   Argument providing the content areas depicted in the student growth plots.
+
+`districts`{#districts}
+
+:   A vector of district numbers indicating which districts student growth plots should be produced for.
+
+`schools`{#schools}
+
+:   A vector of school numbers indicating which schools student growth plots should be produce for.
+
+`reports.by.student`{#reports.by.student}
+
+:   A Boolean variable passed to `studentGrowthPlot_Styles` indicating whether separate individual plots will be produced or separate reports and a summary catalog containing those reports will be produced.
+
+`reports.by.instructor`{#reports.by.instructor}
+
+:   A Boolean variable passed to `studentGrowthPlot_Styles` indicating whether individual plots will be collated and bundled as a summary catalog by instructor.
+
+`reports.by.school`{#reports.by.school}
+
+:   A Boolean variable passed to `studentGrowthPlot_Styles` indicating whether individual plots will be collated and bundled as a summary catalog by school. Prior to version 0.9-9.7, this was the only way of bundling reports and was thus the default.
+
+`sgPlot.years`{#sgPlot.years}
+
+:   A vector of all years over which student growth plots are being produced.
+
+`sgPlot.demo.report`{#sgPlot.demo.report}
+
+:   A Boolean argument indicating whether a demonstration report catalog (with anonymized individual, school, and district names) is to be produced.
+
+`sgPlot.folder`{#sgPlot.folder}
+
+:   A character argument specifying the folder into which the student growth reports will be placed.
+
+`sgPlot.folder.names`{#sgPlot.folder.names}
+
+:   Either `names` or `number` indicating whether names or numbers should be used as folder names.
+
+`sgPlot.anonymize`{#sgPlot.anonymize}
+
+:   A Boolean argument indicating whether individual, school, and district names should be anonymized.
+
+`sgPlot.front.page`{#sgPlot.front.page}
+
+:   A character vector indicating the file, the the base directory, that should be used as the front page for the student growth plots.
+
+`sgPlot.header.footer.color`{#sgPlot.header.footer.color}
+
+:   A color (as a character) specifying the header/footer color of the report.
+
+`sgPlot.fan`{#sgPlot.fan}
+
+:   A Boolean argument indicating whether the projection fan indicating growth rates necessary to reach 1 years targets be displayed.
+
+`sgPlot.sgp.targets`{#sgPlot.sgp.targets}
+
+:   A Boolean argument indicating whether the sgp targets are to be displayed.
+
+`sgPlot.cleanup`{#sgPlot.cleanup}
+
+:   A Boolean argument indicating whether to cleanup/remove files produced as part of pdfLaTeX build.
+
+`sgPlot.baseline`{#sgPlot.baseline}
+
+:   A Boolean argument indicating whether to use baseline referenced student growth percentiles in student growth plots.
+
+`sgPlot.sgp.targets.timeframe`{#sgPlot.sgp.targets.timeframe}
+
+:   An integer argument indicating the number of years forward associated with SGP targets.
+
+`sgPlot.zip`{#sgPlot.zip}
+
+:   A Boolean argument indicating whether to school folders.
+
+`sgPlot.output.format`{#sgPlot.output.format}
+
+:   Argument indicating the desired type of output format for student growth plots. Either 'PDF', 'PNG', or 'PDF_PIECES'.
+
+`sgPlot.linkages`{#sgPlot.linkages}
+
+:   Argument passing linkage information (defaults to NULL) associated with assessment scale transition.
+
+## Details
+
+`studentGrowthPlot_Styles` is a utility function containing five templates for displaying [`studentGrowthPlot`](studentGrowthPlot.html)s. The templates display two or three content areas depending upon the availability of test data for the state. This function will expand in the future to allow for other types of individual growth and achievement reports.
+
+## Value
+
+Function produces *numerous* (potentially hundreds of thousands of) PDF/PNG student growth plots.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org> and Adam Van Iwaarden <avaniwaarden@nciea.org>
+
+## References
+
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek, *Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition* (pp. 439-450). New York: Routledge.
+

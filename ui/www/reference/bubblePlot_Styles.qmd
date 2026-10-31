@@ -1,0 +1,130 @@
+---
+title: "bubblePlot_Styles()"
+subtitle: "bubblePlot_Styles providing various uses of the core bubblePlot function"
+toc: true
+---
+
+## Description
+
+Function includes a number of "styles" associated with [`bubblePlot`](bubblePlot.html) to create bubble plots depicting a variety of relationships often of interest to stakeholders. The [`bubblePlot`](bubblePlot.html) function itself is adaptable to many representations but is most often used in conjunction with results derived from [`summarizeSGP`](summarizeSGP.html) to represent summary level results of growth against achievement (usually, median student growth percentile against percentage at/above proficient).
+
+## Usage
+
+``` R
+bubblePlot_Styles(
+                sgp_object,
+        state,
+        bPlot.years=NULL,
+        bPlot.content_areas=NULL,
+        bPlot.districts=NULL,
+        bPlot.schools=NULL,
+        bPlot.instructors=NULL,
+        bPlot.styles=c(1),
+        bPlot.levels=NULL,
+        bPlot.level.cuts=NULL,
+        bPlot.full.academic.year=TRUE,
+        bPlot.minimum.n=10,
+        bPlot.anonymize=FALSE,
+        bPlot.prior.achievement=TRUE,
+        bPlot.draft=FALSE,
+        bPlot.demo=FALSE,
+        bPlot.output="PDF",
+        bPlot.format="print",
+        bPlot.folder="Visualizations/bubblePlots")
+```
+
+## Arguments
+
+`sgp_object`{#sgp_object}
+
+:   An object of class SGP containing long formatted data in the `@Data` slot that will be used for the production of student growth and achievement plots and system growth and achievement plots, summary data from [`summarizeSGP`](summarizeSGP.html) in the `@Summary` slot for bubble plots.
+
+`state`{#state}
+
+:   Acronym indicating state associated with the summaries for access to assessment program information embedded in `SGPstateData`.
+
+`bPlot.years`{#bPlot.years}
+
+:   A vector indicating year(s) in which to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will use the last year available in the data to produce [`bubblePlot`](bubblePlot.html)s.
+
+`bPlot.content_areas`{#bPlot.content_areas}
+
+:   A vector indicating content area(s) to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will produce plots for all available content areas provided in the data.
+
+`bPlot.districts`{#bPlot.districts}
+
+:   A vector indicating districts to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will produce plots for all available districts provided in the data where districts represent a relevant unit to be represented by the specific `bubblePlot` style.
+
+`bPlot.schools`{#bPlot.schools}
+
+:   A vector indicating schools to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will produce plots for all available schools provided in the data where districts represent a relevant unit to be represented by the specific `bubblePlot` style.
+
+`bPlot.instructors`{#bPlot.instructors}
+
+:   A vector indicating instructors to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will produce plots for all available instructors provided in the data where schools and districts represent relevant units to be represented by the specific `bubblePlot` style.
+
+`bPlot.styles`{#bPlot.styles}
+
+:   A vector of positive integers indicating the types of [`bubblePlot`](bubblePlot.html)s to produce using data available in `sgp_object`. See associated documentation for example plots.
+
+`bPlot.levels`{#bPlot.levels}
+
+:   A character vector of levels to be used to color bubbles in the [`bubblePlot`](bubblePlot.html). See associated documentation for example plots.
+
+`bPlot.level.cuts`{#bPlot.level.cuts}
+
+:   A vector of cuts to be used to distinguish levels used to color bubbles in the [`bubblePlot`](bubblePlot.html). See associated documentation for example plots.
+
+`bPlot.full.academic.year`{#bPlot.full.academic.year}
+
+:   A Boolean argument (defaults to TRUE) indicating whether [`bubblePlot`](bubblePlot.html)s should use full academic year results if available.
+
+`bPlot.minimum.n`{#bPlot.minimum.n}
+
+:   A positive integer (defaults to 10) indicating the minimum size for summary values to be displayed in the [`bubblePlot`](bubblePlot.html)s.
+
+`bPlot.anonymize`{#bPlot.anonymize}
+
+:   A Boolean argument (defaults to FALSE) indicating whether to anonymize [`bubblePlot`](bubblePlot.html)s school and district names that appear in the plots and data tips of the plots. For student level anonymization, the function utilizes the randomNames package to produce gender and ethnic correct names based upon gender and ethnicity codes available in `@Data`.
+
+`bPlot.prior.achievement`{#bPlot.prior.achievement}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to produce [`bubblePlot`](bubblePlot.html)s using prior achievement as well as current achievement as the vertical dimension of the [`bubblePlot`](bubblePlot.html).
+
+`bPlot.draft`{#bPlot.draft}
+
+:   A Boolean argument (defaults to FALSE) indicating whether to put an indicator on the chart noting that the results are draft and to not distribute.
+
+`bPlot.demo`{#bPlot.demo}
+
+:   A Boolean argument (defaults to FALSE) indicating whether to produce demo student level plots (styles 150 and/or 153) for instructors.
+
+`bPlot.output`{#bPlot.output}
+
+:   Argument indicating the desired type of output format for bubble plots. Either 'PDF' (default) or 'PNG'.
+
+`bPlot.format`{#bPlot.format}
+
+:   Either "print" or "presentation" indicating whether to optimize the plot for print form (light background) or presentation form (dark background).
+
+`bPlot.folder`{#bPlot.folder}
+
+:   Character vector indicating where [`bubblePlot`](bubblePlot.html)s should be placed. Default folder is "Visualizations/bubblePlots".
+
+## Details
+
+`bubblePlot_Styles` is an omnibus function containing a number of applications of the `bubblePlot` function with data output from `SGP` analyses. As added styles are constructed they will be added to the function allowing user to construct plots of their liking. User wishing to participate and provide or suggest specific styles of their own should contact the package maintainer. Styles representing summary level data (e.g., growth and achievement for schools) are currently assigned numbers from 1 to 99 and styles representing individual level data (e.g., growth and achievement for students within a single grade) are currently assigned numbers from 100 to 199.
+
+  -------- ------------------------------------------------------------------------------------------------------------------
+  `1`:     Growth and achievement [`bubblePlot`](bubblePlot.html)s for the entire state with bubbles representing schools.
+  `100`:   Growth and achievement [`bubblePlot`](bubblePlot.html)s by grade for students in selected schools and districts.
+  -------- ------------------------------------------------------------------------------------------------------------------
+
+## Value
+
+Function produces *numerous* PDF bubble charts in the styles specified by the function.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org> and Adam Van Iwaarden <avaniwaarden@nciea.org>
+

@@ -1,0 +1,56 @@
+---
+title: "SGP-class"
+subtitle: "Class \"SGP\""
+toc: true
+---
+
+## Description
+
+The formal S4 class for SGP. This class stores the data object for use with the functions [`analyzeSGP`](analyzeSGP.html), [`combineSGP`](combineSGP.html), [`summarizeSGP`](summarizeSGP.html), and [`visualizeSGP`](visualizeSGP.html). The SGP class contains and organizes all the results associated with SGP analyses. [`is.SGP`](SGP-class.html) tests for membership for this class.
+
+## Usage
+
+Objects can be created by calls of the form `new("SGP", ...)`, but this is not encouraged. To instantiate a new instance of SGP class use the function [`prepareSGP`](prepareSGP.html) instead.
+
+`is.SGP(x)`
+
+## Slots
+
+`Data`:
+
+:   A data.table including student-level data in a (long) format. For annual testing, each VALID_CASE, CONTENT_AREA, YEAR, ID combination represents a unique case in the data. For instances with multiple tests within a year, each VALID_CASE, CONTENT_AREA, YEAR, ID, WITHIN_YEAR combination represents a unique case in the data. See sgpData_LONG for an exemplar data set
+
+`Data_Supplementary`:
+
+:   A list (possibly NULL) providing additional data.tables containing student level multiple-membership lookup tables. For example, sgpData_INSTRUCTOR_NUMBER provides student teacher linkages and can be embedded in this slot using a list that contains it.
+
+`Names`:
+
+:   A data.frame with five columns: 'names.provided', 'names.sgp', 'names.type', 'names.info', 'names.output'. This data.frame is used as a lookup table to translate state specific variable names to SGP variable names as well as provide information for summarizeSGP on the types of summary tables to produce.
+
+`SGP`:
+
+:   A list including the output from [`analyzeSGP`](analyzeSGP.html)
+
+`Summary`:
+
+:   A list including the output from [`summarizeSGP`](summarizeSGP.html)
+
+`Version`:
+
+:   A list of meta-data including the version of the SGP package used to construct the SGP object and the date the object was created.
+
+## Details
+
+list.null:
+
+:   combines class `list` and class `NULL`
+
+## Author(s)
+
+Jonathan P. Weeks <weeksjp@gmail.com>, Adam Van Iwaarden <avaniwaarden@nciea.org> and Damian W. Betebenner <dbetebenner@nciea.org>
+
+## See Also
+
+[`prepareSGP`](prepareSGP.html)
+

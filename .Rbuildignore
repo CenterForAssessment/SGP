@@ -7,3 +7,7 @@
 ^_pkgdown\.yml$
 ^\.git$
 ^R/sqliteSGP\.R$
+^ui$
+^man/figures/favicon\.png$
+^cran-comments\.md$
+^\.lycheeignore$

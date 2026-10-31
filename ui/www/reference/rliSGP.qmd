@@ -1,0 +1,188 @@
+---
+title: "rliSGP()"
+subtitle: "Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments."
+toc: true
+---
+
+## Description
+
+rliSGP is a wrapper function design to expedite SGP analyses on Renaissance Learning Incorporated (RLI) interim STAR assessments.
+
+## Usage
+
+``` R
+rliSGP(
+    sgp_object,
+  additional.data=NULL,
+    state=NULL,
+    content_areas=c("MATHEMATICS", "MATHEMATICS_SPANISH", "READING", 
+            "READING_SPANISH", "READING_UNIFIED", "EARLY_LITERACY", 
+            "EARLY_LITERACY_SPANISH"),
+  testing.window=NULL,
+  testing.window.type=NULL,
+  eow.or.update="UPDATE",
+    update.save.shell.only=FALSE,
+  configuration.year=NULL,
+    sgp.percentiles.baseline=TRUE,
+    sgp.projections.baseline=TRUE,
+    sgp.projections.lagged.baseline=FALSE,
+    sgp.target.scale.scores=TRUE,
+  update.ids=NULL,
+  sgp.config=NULL,
+    SGPt=TRUE,
+    simulate.sgps=FALSE,
+    save.intermediate.results=FALSE,
+    coefficient.matrices=NULL,
+    coefficient.matrices.year=NULL,
+    goodness.of.fit.print=FALSE,
+    return.updated.shell=FALSE,
+    fix.duplicates="KEEP.ALL",
+    eow.calculate.sgps=FALSE,
+    score.type="RASCH",
+    cutscore.file.name="Cutscores.csv",
+    get.cohort.data.info=FALSE,
+  use.latest.rliMatrices=TRUE,
+  parallel.config=NULL)
+```
+
+## Arguments
+
+`sgp_object`{#sgp_object}
+
+:   An object of class SGP or a `data.frame` from which an SGP object can be produced. If data.frame is supplied, the current window's data will be created from the last window present in the data.frame.
+
+`additional.data`{#additional.data}
+
+:   Current window's data for UPDATE or EOW (end of window) processing. Can be NULL if new data all fed into argument 'sgp_object' as data.frame.
+
+`state`{#state}
+
+:   Abbreviation for STATE/ORGANIZATION being analyzed. Currently only available for 'RLI' or 'RLI_UK'.
+
+`content_areas`{#content_areas}
+
+:   Character vector indicating which content areas `rliSGP` should be run for ('MATHEMATICS', 'READING', 'READING_UNIFIED', and/or 'EARLY_LITERACY'). Default is all.
+
+`testing.window`{#testing.window}
+
+:   Argument indicating testing window being analyzed. Either 'FALL', 'WINTER', 'SPRING' indicating what testing window's data is being analyzed.
+
+`testing.window.type`{#testing.window.type}
+
+:   Argument indicating testing window type being analyzed. Either 'FF', 'SF', 'FW', 'WS', 'SS', 'FS' indicating what testing window's data is being analyzed. Default is NULL indicating all testing windows types are being analyzed in that testing window.
+
+`eow.or.update`{#eow.or.update}
+
+:   Argument indicating whether end-of-window or within-window updates are being done. Either 'EOW' (end of window) or 'UPDATE' (within window).
+
+`update.save.shell.only`{#update.save.shell.only}
+
+:   Boolean argument indicating whether End of Window processing should only produce/save RLI_SGP_UPDATE_SHELL and bypass coefficient matrix production.
+
+`configuration.year`{#configuration.year}
+
+:   Year associated with SGP analyses (configuration year) to be used.
+
+`sgp.percentiles.baseline`{#sgp.percentiles.baseline}
+
+:   Boolean variable passed to [`updateSGP`](updateSGP.html) to control whether baseline student growth percentiles are calculated. Default is TRUE.
+
+`sgp.projections.baseline`{#sgp.projections.baseline}
+
+:   Boolean variable passed to [`updateSGP`](updateSGP.html) to control whether baseline student growth projections are calculated. Default is TRUE.
+
+`sgp.projections.lagged.baseline`{#sgp.projections.lagged.baseline}
+
+:   Boolean variable passed to [`updateSGP`](updateSGP.html) to control whether lagged baseline student growth projections are calculated. Default is FALSE.
+
+`sgp.target.scale.scores`{#sgp.target.scale.scores}
+
+:   Boolean variable passed to [`updateSGP`](updateSGP.html) to control whether scale score targets are calculated. Default is TRUE.
+
+`update.ids`{#update.ids}
+
+:   Argument that allows ID to be updated based upon a supplied two column data frame where the first column represents the ORIGINAL/OLD ID and the second column the NEW ID that is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'additional.data' that are provided as part of the 'rliSGP' call. Substitution will occur on entire data set before analysis. Default is NULL, no ID replacement is performed.
+
+`sgp.config`{#sgp.config}
+
+:   List of configuration arguments to be used for analyses. Defaults to NULL which will use the default configuration provided by `getRLIConfig` which utilizes meta-data from SGPstateData..
+
+`SGPt`{#SGPt}
+
+:   Argument indicating whether to perform time dependent SGP (SGPt) analyses. Current default is TRUE based upon transition to SGPt in Summer 2015.
+
+`simulate.sgps`{#simulate.sgps}
+
+:   A Boolean argument indicating whether to calculate SGP standard errors based upon CSEMs provided by either an embedded CSEM-scale score lookup or an embedded variable. Default is FALSE.
+
+`save.intermediate.results`{#save.intermediate.results}
+
+:   Boolean variable passed to [`updateSGP`](updateSGP.html) indicating whether to save intermediate results from [`prepareSGP`](prepareSGP.html), [`analyzeSGP`](analyzeSGP.html), and [`combineSGP`](combineSGP.html) as part of the `rliSGP` analyses.
+
+`coefficient.matrices`{#coefficient.matrices}
+
+:   List of baseline matrices to be used for analyses (overrides what exists in `SGPstateData`). Defaults to NULL (use those in `SGPstateData`).
+
+`coefficient.matrices.year`{#coefficient.matrices.year}
+
+:   Year associated with coefficient matrices to be used for analyses. Defaults to NULL which will use the most recent matrices calculated before the year provided in the data.
+
+`goodness.of.fit.print`{#goodness.of.fit.print}
+
+:   Boolean argument passed to [`updateSGP`](updateSGP.html) indicating whether to print goodness of fit plots associated with outcome. Default is FALSE.
+
+`return.updated.shell`{#return.updated.shell}
+
+:   Boolean argument (defaults to FALSE) indicating whether to return `sgp_object` as part of call to `rliSGP`.
+
+`fix.duplicates`{#fix.duplicates}
+
+:   Character argument (defaults to 'KEEP.ALL') indicating how to deal with duplicates submitted as part of data for analysis. Setting 'fix.duplicates' to null sets no modification of duplicates.
+
+`eow.calculate.sgps`{#eow.calculate.sgps}
+
+:   Boolean argument passed to [`updateSGP`](updateSGP.html) further passed to [`analyzeSGP`](analyzeSGP.html) indicating whether student growth percentiles are calculated as part of EOW analyses. Default is FALSE which results in just coefficient matrices being calculated.
+
+`score.type`{#score.type}
+
+:   Either `RASCH` (default) or `STAR` indicating what type of score is being supplied for analysis. The selection ensures the correct cutscores, matrices, and knots/boundaries are used for analyses.
+
+`cutscore.file.name`{#cutscore.file.name}
+
+:   Cutscore file name and path for input and creation of RLI Cutscores. Default is `Cutscores.csv`.
+
+`get.cohort.data.info`{#get.cohort.data.info}
+
+:   Boolean argument passed to `analyzeSGP` indicating whether to calculate norm group cohort counts.
+
+`use.latest.rliMatrices`{#use.latest.rliMatrices}
+
+:   Boolean argument indicating whether to ensure use of latest version of RLImatrices (defaults to TRUE).
+
+`parallel.config`{#parallel.config}
+
+:   Argument passed to [`abcSGP`](abcSGP.html) or [`updateSGP`](updateSGP.html) to activate parallel processing with an appropriate backend.
+
+## Value
+
+Saves relevant results to disc for use in subsequent analyses.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org>
+
+## Examples
+
+``` R
+## Not run: 
+####### For Within Window processing
+
+testSGP('RLI')
+
+####### For End-of-Window processing
+
+
+
+## End(Not run)
+```
+

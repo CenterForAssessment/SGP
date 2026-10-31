@@ -1,0 +1,369 @@
+---
+title: "visualizeSGP()"
+subtitle: "Visualize data from SGP analyses"
+toc: true
+---
+
+## Description
+
+Utility function to produce a variety of graphical displays associated with student growth percentile/percentile growth trajectory results. Function currently includes facility to produce individual student growth and achievement plots, interactive bubble plots depicting summary growth and achievement data, and growth and achievement charts showing system level growth and achievement data as shown on the cover of *Educational Measurement: Issues and Practice* as part of Betebenner (2009) and Betebenner (2012).
+
+## Usage
+
+``` R
+visualizeSGP(
+        sgp_object,
+        plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+        state,
+        bPlot.years=NULL,
+        bPlot.content_areas=NULL,
+        bPlot.districts=NULL,
+        bPlot.schools=NULL,
+        bPlot.instructors=NULL,
+        bPlot.styles=c(1),
+        bPlot.levels=NULL,
+        bPlot.level.cuts=NULL,
+        bPlot.full.academic.year=TRUE,
+        bPlot.minimum.n=10,
+        bPlot.anonymize=FALSE,
+        bPlot.prior.achievement=TRUE,
+        bPlot.draft=FALSE,
+        bPlot.demo=FALSE,
+        bPlot.output="PDF",
+        bPlot.format="print",
+        bPlot.folder="Visualizations/bubblePlots",
+        sgPlot.save.sgPlot.data=FALSE,
+        sgPlot.years=NULL,
+        sgPlot.content_areas=NULL,
+        sgPlot.districts=NULL,
+        sgPlot.schools=NULL,
+        sgPlot.reports.by.school=TRUE,
+        sgPlot.instructors=NULL,
+        sgPlot.reports.by.instructor=FALSE,
+        sgPlot.students=NULL,
+        sgPlot.reports.by.student=FALSE,
+        sgPlot.reports.group.vars=
+            list(DISTRICT_NUMBER="DISTRICT_NUMBER", SCHOOL_NUMBER="SCHOOL_NUMBER"),
+        sgPlot.header.footer.color="#4CB9CC",
+        sgPlot.front.page=NULL,
+        sgPlot.folder="Visualizations/studentGrowthPlots",
+        sgPlot.folder.names="number",
+        sgPlot.fan=TRUE,
+        sgPlot.custom.trajectory=FALSE,
+        sgPlot.sgp.targets=FALSE,
+        sgPlot.sgp.targets.timeframe=3,
+        sgPlot.anonymize=FALSE,
+        sgPlot.cleanup=TRUE,
+        sgPlot.demo.report=FALSE,
+        sgPlot.produce.plots=TRUE,
+        sgPlot.baseline=NULL,
+        sgPlot.zip=TRUE,
+        sgPlot.output.format="PDF",
+        sgPlot.year.span=5,
+        sgPlot.plot.test.transition=NULL,
+        gaPlot.years=NULL,
+        gaPlot.content_areas=NULL,
+        gaPlot.students=NULL,
+        gaPlot.format="print",
+        gaPlot.baseline=NULL,
+        gaPlot.max.order.for.progression=NULL,
+        gaPlot.start.points="Achievement Level Cuts",
+        gaPlot.back.extrapolated.cuts=NULL,
+        gaPlot.SGPt=NULL,
+        gaPlot.folder="Visualizations/growthAchievementPlots",
+        parallel.config=NULL)
+```
+
+## Arguments
+
+`sgp_object`{#sgp_object}
+
+:   An object of class SGP containing long formatted data in the `@Data` slot that will be used for the production of student growth and achievement plots and system growth and achievement plots, summary data from [`summarizeSGP`](summarizeSGP.html) in the `Summary` slot for bubble plots. Alternatively, a properly formatted WIDE data set can be provided for production of student growth plots. Such data sets are produced from an SGP object when the sgPlot.save.sgPlot.data argument is set to TRUE.
+
+`plot.types`{#plot.types}
+
+:   A character vector indicating what types of plots to construct. Currently available plots include [`bubblePlot`](bubblePlot.html), [`studentGrowthPlot`](studentGrowthPlot.html), and [`growthAchievementPlot`](growthAchievementPlot.html).
+
+`state`{#state}
+
+:   Acronym indicating state associated with the summaries for access to assessment program information embedded in `SGPstateData`.
+
+`bPlot.years`{#bPlot.years}
+
+:   A vector indicating year(s) in which to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will use the last year available in the data to produce [`bubblePlot`](bubblePlot.html)s.
+
+`bPlot.content_areas`{#bPlot.content_areas}
+
+:   A vector indicating content area(s) to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will produce plots for all available content areas provided in the data.
+
+`bPlot.districts`{#bPlot.districts}
+
+:   A vector indicating districts to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. Consult [`bubblePlot`](bubblePlot.html) styles to determine which [`bubblePlot`](bubblePlot.html)s styles accept specification for districts. Default is to produce plots for all available districts in the data.
+
+`bPlot.schools`{#bPlot.schools}
+
+:   A vector indicating schools to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. Consult [`bubblePlot`](bubblePlot.html) styles to determine which [`bubblePlot`](bubblePlot.html) styles accept specification for schools. Default is to produce plots for all available schools in the data.
+
+`bPlot.instructors`{#bPlot.instructors}
+
+:   A vector indicating instructors to produce [`bubblePlot`](bubblePlot.html)s using data available in `sgp_object`. If missing the function will produce plots for all available instructors provided in the data where schools and districts represent relevant units to be represented by the specific `bubblePlot` style.
+
+`bPlot.styles`{#bPlot.styles}
+
+:   A vector of positive integers indicating the types of [`bubblePlot`](bubblePlot.html)s to produce using data available in `sgp_object`. See associated documentation for example plots.
+
+`bPlot.levels`{#bPlot.levels}
+
+:   A character vector of levels to be used to color bubbles in the [`bubblePlot`](bubblePlot.html). See associated documentation for example plots.
+
+`bPlot.level.cuts`{#bPlot.level.cuts}
+
+:   A vector of cuts to be used to distinguish levels used to color bubbles in the [`bubblePlot`](bubblePlot.html). See associated documentation for example plots.
+
+`bPlot.full.academic.year`{#bPlot.full.academic.year}
+
+:   A Boolean argument (defaults to TRUE) indicating whether [`bubblePlot`](bubblePlot.html)s should use full academic year results if available.
+
+`bPlot.minimum.n`{#bPlot.minimum.n}
+
+:   A positive integer (defaults to 10) indicating the minimum size for summary values to be displayed in the [`bubblePlot`](bubblePlot.html)s.
+
+`bPlot.anonymize`{#bPlot.anonymize}
+
+:   A Boolean argument (defaults to FALSE) indicating whether to anonymize [`bubblePlot`](bubblePlot.html)s school and district names that appear in the plots and data tips of the plots. For student level anonymization, the function utilizes the randomNames package to produce gender and ethnic correct names based upon gender and ethnicity codes available in `sgp_object@Data`.
+
+`bPlot.prior.achievement`{#bPlot.prior.achievement}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to produce [`bubblePlot`](bubblePlot.html)s using prior achievement as well as current achievement as the vertical dimension of the [`bubblePlot`](bubblePlot.html).
+
+`bPlot.draft`{#bPlot.draft}
+
+:   A Boolean argument (defaults to FALSE) indicating whether to put an indicator on the chart noting that the results are draft and to not distribute.
+
+`bPlot.demo`{#bPlot.demo}
+
+:   A Boolean argument (defaults to FALSE) indicating whether to produce demo student level plots (styles 150 and/or 153) for instructors.
+
+`bPlot.output`{#bPlot.output}
+
+:   Argument indicating the desired type of output format for bubble plots. Either 'PDF' (default) or 'PNG'.
+
+`bPlot.format`{#bPlot.format}
+
+:   Either "print" or "presentation" indicating whether to optimize the plot for print form (light background) or presentation form (dark background).
+
+`bPlot.folder`{#bPlot.folder}
+
+:   Character vector indicating where [`bubblePlot`](bubblePlot.html)s should be placed. Default folder is "Visualizations/bubblePlots".
+
+`sgPlot.save.sgPlot.data`{#sgPlot.save.sgPlot.data}
+
+:   A Boolean argument indicating whether wide formatted data should be save as part of individual student report production. For operational student report production construction, using a wide formatted file for a large state can save in having to reshape the same long file multiple times.
+
+`sgPlot.years`{#sgPlot.years}
+
+:   A vector indicating year for which to produce [`studentGrowthPlot`](studentGrowthPlot.html)s. The supplied year indicates the *final* year associated with each student's [`studentGrowthPlot`](studentGrowthPlot.html). If missing the function will use the last year available in the data to produce [`studentGrowthPlot`](studentGrowthPlot.html)s.
+
+`sgPlot.content_areas`{#sgPlot.content_areas}
+
+:   A vector indicating the content areas for which to produce [`studentGrowthPlot`](studentGrowthPlot.html)s. If missing, the function will utilize all available content areas.
+
+`sgPlot.districts`{#sgPlot.districts}
+
+:   A vector indicating which districts to produce [`studentGrowthPlot`](studentGrowthPlot.html)s for. If missing the function will use *all* available districts in the data to produce [`studentGrowthPlot`](studentGrowthPlot.html)s.
+
+`sgPlot.schools`{#sgPlot.schools}
+
+:   A vector indicating which schools to produce [`studentGrowthPlot`](studentGrowthPlot.html)s for. If missing the function will use *all* available schools in the data to produce [`studentGrowthPlot`](studentGrowthPlot.html)s. If both `sgPlot.districts` and `sgPlot.schools` are provided the function produces [`studentGrowthPlot`](studentGrowthPlot.html)s for ALL students in the districts and schools provided.
+
+`sgPlot.reports.by.school`{#sgPlot.reports.by.school}
+
+:   A Boolean variable indicating whether the reports should be collated as single reports in a single folder by school and deposited into a `district/school/grade folder` hierarchy. The default is TRUE which puts the reports into their appropriate `district/school/grade` folder.
+
+`sgPlot.instructors`{#sgPlot.instructors}
+
+:   A vector indicating which instructors to produce [`studentGrowthPlot`](studentGrowthPlot.html)s for. If NULL and the argument `sgPlot.reports.by.instructor` is TRUE, the argument function will use *all* available instructors in the data to produce [`studentGrowthPlot`](studentGrowthPlot.html)s. If `sgPlot.districts` and/or `sgPlot.schools` are provided the function produces [`studentGrowthPlot`](studentGrowthPlot.html)s for ALL students in the districts and/or schools provided.
+
+`sgPlot.reports.by.instructor`{#sgPlot.reports.by.instructor}
+
+:   A Boolean variable indicating whether the reports should be collated as single reports in a single folder by school and deposited into a `district/school/grade folder` hierarchy. The default is TRUE which puts the reports into their appropriate `district/school/grade` folder.
+
+`sgPlot.students`{#sgPlot.students}
+
+:   A vector of student `ID`s indicating which students to produce [`studentGrowthPlot`](studentGrowthPlot.html)s for. If missing the function will use *all* available students in the data to produce [`studentGrowthPlot`](studentGrowthPlot.html)s.
+
+`sgPlot.reports.group.vars`{#sgPlot.reports.group.vars}
+
+:   A list of variables used to group student reports. Default is `list(DISTRICT_NUMBER='DISTRICT_NUMBER', SCHOOL_NUMBER='SCHOOL_NUMBER')`
+
+`sgPlot.reports.by.student`{#sgPlot.reports.by.student}
+
+:   A Boolean variable indicating whether the reports should be collated as single reports in a single folder or deposited into a `district/school/grade folder` hierarchy. The default is FALSE which puts the reports into their appropriate `district/school/grade` slot.
+
+`sgPlot.header.footer.color`{#sgPlot.header.footer.color}
+
+:   Character vector (default is blue) indicating the color of the header/footer associated with the [`studentGrowthPlot`](studentGrowthPlot.html). Another good color is `goldenrod2`.
+
+`sgPlot.front.page`{#sgPlot.front.page}
+
+:   A path to a PDF to be used as the front page to the [`studentGrowthPlot`](studentGrowthPlot.html). The default is missing so that no front page is attached to the [`studentGrowthPlot`](studentGrowthPlot.html).
+
+`sgPlot.folder`{#sgPlot.folder}
+
+:   Character vector indicating where [`studentGrowthPlot`](studentGrowthPlot.html)s should be placed. Note that [`studentGrowthPlot`](studentGrowthPlot.html)s are placed within nested folders within this folder. Default folder is "Visualizations/studentGrowthPlots".
+
+`sgPlot.folder.names`{#sgPlot.folder.names}
+
+:   Either "name" or "number" (the default) indicating how the nested folder structure will be labeled that holds the [`studentGrowthPlot`](studentGrowthPlot.html)s.
+
+`sgPlot.fan`{#sgPlot.fan}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to produce projection fan on [`studentGrowthPlot`](studentGrowthPlot.html)s.
+
+`sgPlot.custom.trajectory`{#sgPlot.custom.trajectory}
+
+:   A Boolean argument (defaults to FALSE) or a character vector indicating the variable name containing the custom trajectory coordinates to be plotted.
+
+`sgPlot.sgp.targets`{#sgPlot.sgp.targets}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to indicate SGP growth targets on [`studentGrowthPlot`](studentGrowthPlot.html)s.
+
+`sgPlot.sgp.targets.timeframe`{#sgPlot.sgp.targets.timeframe}
+
+:   An integer argument specifying the number of years forward associated with targets to be added to the student growth plots.
+
+`sgPlot.anonymize`{#sgPlot.anonymize}
+
+:   A Boolean argument (defaults to FALSE) indicating whether to anonymize [`studentGrowthPlot`](studentGrowthPlot.html)s student, school and district names. For student level anonymization, the function utilizes the `randomNames` package to produce gender and ethnicity based names based upon gender and ethnicity codes available in `sgp_object@Data`.
+
+`sgPlot.cleanup`{#sgPlot.cleanup}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to remove files produced by pdfLaTeX to produce [`studentGrowthPlot`](studentGrowthPlot.html) catalogs.
+
+`sgPlot.demo.report`{#sgPlot.demo.report}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to just produce a sample [`studentGrowthPlot`](studentGrowthPlot.html) catalogs. Note: When producing [`studentGrowthPlot`](studentGrowthPlot.html)s for an entire state, considerable resources are required to produce this many reports. We are actively working on parallelizing this functionality to reduce report production time by two orders of magnitude.
+
+`sgPlot.produce.plots`{#sgPlot.produce.plots}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to produce [`studentGrowthPlot`](studentGrowthPlot.html)s. Useful when one just wants to produce wide formatted data without the actual student growth plots.
+
+`sgPlot.baseline`{#sgPlot.baseline}
+
+:   Argument (defaults to NULL) indicating whether to use baseline referenced SGPs for student growth plot construction. If not set by user, argument will be set using `SGPstateData` which contains information on whether state is a cohort or baseline referenced system.
+
+`sgPlot.zip`{#sgPlot.zip}
+
+:   A Boolean argument (defaults to TRUE) indicating whether to zip school folders containing [`studentGrowthPlot`](studentGrowthPlot.html)s.
+
+`sgPlot.output.format`{#sgPlot.output.format}
+
+:   Argument indicating the desired type of output format for student growth plots. Either 'PDF' (default), 'PNG', 'PDF_PIECES', or 'JSON'.
+
+`sgPlot.year.span`{#sgPlot.year.span}
+
+:   Integer argument (defaults to 5) indicating the number of years to display for the pdf student growth plot.
+
+`sgPlot.plot.test.transition`{#sgPlot.plot.test.transition}
+
+:   Boolean argument (defaults to NULL, changed to FALSE internally) indicating whether test transition data will be used IF it's available. Setting to FALSE ignore previous test transition data, which would indicate a desire to 'forget the past'.
+
+`gaPlot.years`{#gaPlot.years}
+
+:   A vector indicating the year(s) for which to produce [`growthAchievementPlot`](growthAchievementPlot.html)s. If missing the function will use the last year available in the data to produce the [`growthAchievementPlot`](growthAchievementPlot.html)s.
+
+`gaPlot.content_areas`{#gaPlot.content_areas}
+
+:   A vector indicating content area(s) to produce [`growthAchievementPlot`](growthAchievementPlot.html)s using data available in `sgp_object`. If missing the function will produce plots for all available content areas provided in the data.
+
+`gaPlot.students`{#gaPlot.students}
+
+:   A vector of student `ID`s indicating which students to produce [`growthAchievementPlot`](growthAchievementPlot.html)s for. If missing the function will use *all* available students in the data to produce [`growthAchievementPlot`](growthAchievementPlot.html)s.
+
+`gaPlot.format`{#gaPlot.format}
+
+:   Either 'print' or 'presentation' indicating whether to optimize the plot for print form (light background) or presentation form (dark background).
+
+`gaPlot.baseline`{#gaPlot.baseline}
+
+:   Argument (defaults to NULL) indicating whether to calculate growth and achievement plots using percentile trajectories derived from baseline referenced coefficient matrices. If not set by user, argument will be set using `SGPstateData` which contains information on whether state is a cohort or baseline referenced system.
+
+`gaPlot.max.order.for.progression`{#gaPlot.max.order.for.progression}
+
+:   The maximum coefficient matrix order to use for each progression. Default is NULL which utilizes the maximum order available with the coefficient matrices.
+
+`gaPlot.start.points`{#gaPlot.start.points}
+
+:   Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the percentile trajectories of the growth achievement plot will start from.
+
+`gaPlot.folder`{#gaPlot.folder}
+
+:   Character vector indicating where [`growthAchievementPlot`](growthAchievementPlot.html)s should be placed. The default folder is 'Visualizations/growthAchievementPlots'.
+
+`gaPlot.back.extrapolated.cuts`{#gaPlot.back.extrapolated.cuts}
+
+:   A numeric value or Boolean vector indicating whether to create back extrapolated cutscores based upon nth percentile growth.
+
+`gaPlot.SGPt`{#gaPlot.SGPt}
+
+:   Boolean indicator for growth achievement plot indicating whether time dependent SGPs are to be used for student growth projections `SGPt`
+
+`parallel.config`{#parallel.config}
+
+:   A named list with, at a minimum, a WORKERS sublist to specify the number of processors to be used in each major analysis. A BACKEND sublist can also be set = to `FORK` or `MIRAI`. Please consult the manuals and vignettes for information of these packages! Unix/Mac OS defaults to the `FORK` backend (i.e. "multicore" and `mclapply`) to avoid worker node pre-scheduling and appears to be more efficient in these operating systems. The `MIRAI` backend is available for Windows OS and can be manually specified for Unix alike.
+
+    The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PLOTS (student growth plots) specifying the number of processors to be used. NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment.
+
+    Additional examples of parallel configurations can be found in the examples for [`analyzeSGP`](analyzeSGP.html).
+
+## Value
+
+Function produces *numerous* (potentially hundreds of thousands) of pdf files in a folder structure specified by the user and supplied through arguments to the function.
+
+## References
+
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek, *Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition* (pp. 439-450). New York: Routledge.
+
+Betebenner, D. W. (2009). Norm- and criterion-referenced student growth. Educational Measurement: Issues and Practice, 28(4):42-51.
+
+## Author(s)
+
+Damian W. Betebenner <dbetebenner@nciea.org> and Adam Van Iwaarden <avaniwaarden@nciea.org>
+
+## See Also
+
+[`bubblePlot`](bubblePlot.html), [`bubblePlot_Styles`](bubblePlot_Styles.html), [`studentGrowthPlot`](studentGrowthPlot.html), [`growthAchievementPlot`](growthAchievementPlot.html)
+
+## Examples
+
+``` R
+## Not run: 
+## visualizeSGP is Step 5 of 5 of abcSGP
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- prepareSGP(Demonstration_SGP)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP)
+Demonstration_SGP <- combineSGP(Demonstration_SGP)
+Demonstration_SGP <- summarizeSGP(Demonstration_SGP)
+visualizeSGP(Demonstration_SGP)
+
+## Produce a DEMO catalog of student growth plots
+
+visualizeSGP(
+    sgp_object=Demonstration_SGP,
+    plot.types="studentGrowthPlot",
+    state="DEMO",
+    sgPlot.demo.report=TRUE)
+
+## Production of sample student growth and achievement plots
+
+visualizeSGP(
+    sgp_object=Demonstration_SGP,
+    plot.types="studentGrowthPlot",
+    state="DEMO",
+    sgPlot.districts=470,
+    sgPlot.schools=c(6418, 8008),
+    sgPlot.header.footer.color="#4CB9CC")
+
+## End(Not run)
+```
+
